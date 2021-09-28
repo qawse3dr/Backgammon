@@ -1,5 +1,4 @@
 stages:
-  - activation
   - build_linux
   - build_windows
   - unit-tests
@@ -7,22 +6,23 @@ stages:
 
 image: unityci/editor:ubuntu-2020.3.18f1-base-0.15.0
 
-activation:
-  stage: activation
-  script:
-    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
-    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
-    
 build_linux:
   stage: build_linux
-  needs: [activation]
+  needs: []
+  before_script:
+    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
+    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
     - mkdir -p $CI_PROJECT_DIR/linux_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildLinux64Player $CI_PROJECT_DIR/linux_build/build.x86_64
 
 build_windows:
+  image:  unityci/editor:ubuntu-2020.3.18f1-windows-mono-0.15.0
   stage: build_windows
-  needs: [activation]
+  needs: []
+  before_script:
+    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
+    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
     - mkdir -p $CI_PROJECT_DIR/windows_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.x86_64
@@ -30,13 +30,17 @@ build_windows:
 unit-tests:
   stage: unit-tests
   needs: [build_linux]
+  before_script:
+    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
+    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
     - echo "TODO"
 
 clang-format:
+  image: ubuntu:latest
   before_script: 
-    - apt-get -qq update && apt-get -qq install clang-format
+    - apt-get -qq update && apt-get -qq install clang-format-12
   stage: clang-format
   needs: []
   script:
-    - echo "TODO"
+    - clang-format-12 -i --dry-run `find -type f -name "*.cs" | grep -v Library` -Werror -style=file
