@@ -1,0 +1,42 @@
+stages:
+  - activation
+  - build_linux
+  - build_windows
+  - unit-tests
+  - clang-format
+
+image: unityci/editor:ubuntu-2020.3.18f1-base-0.15.0
+
+activation:
+  stage: activation
+  script:
+    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
+    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
+    
+build_linux:
+  stage: build_linux
+  needs: [activation]
+  script:
+    - mkdir -p $CI_PROJECT_DIR/linux_build
+    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildLinux64Player $CI_PROJECT_DIR/linux_build/build.x86_64
+
+build_windows:
+  stage: build_windows
+  needs: [activation]
+  script:
+    - mkdir -p $CI_PROJECT_DIR/windows_build
+    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.x86_64
+
+unit-tests:
+  stage: unit-tests
+  needs: [build_linux]
+  script:
+    - echo "TODO"
+
+clang-format:
+  before_script: 
+    - apt-get -qq update && apt-get -qq install clang-format
+  stage: clang-format
+  needs: []
+  script:
+    - echo "TODO"
