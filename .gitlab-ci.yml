@@ -1,14 +1,14 @@
 stages:
+  - clang-format
   - build_linux
   - build_windows
   - unit-tests
-  - clang-format
+
 
 image: unityci/editor:ubuntu-2020.3.18f1-base-0.15.0
 
 build_linux:
   stage: build_linux
-  needs: []
   retry: 2
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
@@ -20,7 +20,6 @@ build_linux:
 build_windows:
   image:  unityci/editor:ubuntu-2020.3.18f1-windows-mono-0.15.0
   stage: build_windows
-  needs: []
   retry: 2
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
@@ -31,7 +30,6 @@ build_windows:
 
 unit-tests:
   stage: unit-tests
-  needs: [build_linux]
   retry: 2
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
