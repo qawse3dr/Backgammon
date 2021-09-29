@@ -9,7 +9,9 @@ image: unityci/editor:ubuntu-2020.3.18f1-base-0.15.0
 
 build_linux:
   stage: build_linux
-  retry: 2
+  retry:
+    max: 2
+    when: runner_system_failure
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
@@ -20,7 +22,9 @@ build_linux:
 build_windows:
   image:  unityci/editor:ubuntu-2020.3.18f1-windows-mono-0.15.0
   stage: build_windows
-  retry: 2
+  retry:
+    max: 2
+    when: runner_system_failure
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
@@ -30,7 +34,9 @@ build_windows:
 
 unit-tests:
   stage: unit-tests
-  retry: 2
+  retry:
+    max: 2
+    when: runner_system_failure
   before_script:
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
@@ -39,6 +45,9 @@ unit-tests:
 
 clang-format:
   image: ubuntu:latest
+  retry:
+    max: 2
+    when: runner_system_failure
   before_script: 
     - apt-get -qq update && apt-get -qq install clang-format-12
   stage: clang-format
