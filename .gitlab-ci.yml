@@ -36,12 +36,12 @@ build_windows:
   script:
     - mkdir -p $CI_PROJECT_DIR/windows_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.x86_64
-    - zip -r linux_build.zip $CI_PROJECT_DIR/windows_build/
+    - zip -r windows_build.zip $CI_PROJECT_DIR/windows_build/
   artifacts:
     paths:
       - windows_build.zip
     expire_in: 1 week
-    
+
 unit-tests:
   stage: unit-tests
   retry:
