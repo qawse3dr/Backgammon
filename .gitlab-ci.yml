@@ -22,7 +22,7 @@ build_linux:
     - zip -r linux_build.zip $CI_PROJECT_DIR/linux_build/
   artifacts:
     paths:
-      - linux_build.zip
+      - $CI_PROJECT_DIR/linux_build/
     expire_in: 1 week
 
 build_windows:
