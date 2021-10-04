@@ -18,6 +18,11 @@ build_linux:
   script:
     - mkdir -p $CI_PROJECT_DIR/linux_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildLinux64Player $CI_PROJECT_DIR/linux_build/build.x86_64
+    - zip -r linux_build.zip $CI_PROJECT_DIR/linux_build/
+  artifacts:
+    paths:
+      - linux_build.zip
+    expire_in: 1 week
 
 build_windows:
   image:  unityci/editor:ubuntu-2020.3.18f1-windows-mono-0.15.0
@@ -31,7 +36,12 @@ build_windows:
   script:
     - mkdir -p $CI_PROJECT_DIR/windows_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.x86_64
-
+    - zip -r linux_build.zip $CI_PROJECT_DIR/windows_build/
+  artifacts:
+    paths:
+      - windows_build.zip
+    expire_in: 1 week
+    
 unit-tests:
   stage: unit-tests
   retry:
