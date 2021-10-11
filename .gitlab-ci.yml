@@ -50,10 +50,21 @@ unit-tests:
     max: 2
     when: runner_system_failure
   before_script:
+    - apt-get -qq update && apt-get -qq install xsltproc
     - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
-    - echo "TODO"
+    - unity-editor -runTests -nographics -batchmode -projectPath $CI_PROJECT_DIR -testPlatform PlayMode -testResults $CI_PROJECT_DIR/results.txt
+  after_script:
+    # Grab nunit to junit converter of github all credit goes to @pavio-liapota for this converter
+    - wget https://raw.githubusercontent.com/nunit/nunit-transforms/master/nunit3-junit/nunit3-junit.xslt
+    - xsltproc -o $CI_PROJECT_DIR/junit.xml nunit3-junit.xslt $CI_PROJECT_DIR/results.txt | true
+  artifacts:
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/junit.xml
+    reports:
+      junit: junit.xml
 
 clang-format:
   image: ubuntu:latest
