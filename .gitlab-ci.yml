@@ -38,7 +38,7 @@ build_windows:
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
     - mkdir -p $CI_PROJECT_DIR/windows_build
-    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.x86_64
+    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.exe
     - zip -r windows_build.zip $CI_PROJECT_DIR/windows_build/
   artifacts:
     paths:
