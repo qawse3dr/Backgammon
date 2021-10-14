@@ -2,6 +2,7 @@ stages:
   - clang-format
   - build_linux
   - build_windows
+  - build_macOS
   - unit-tests
 
 
@@ -42,6 +43,25 @@ build_windows:
   artifacts:
     paths:
       - windows_build.zip
+    expire_in: 1 week
+
+build_macOS:
+  image:  unityci/editor:ubuntu-2020.3.18f1-mac-mono-0.15.0
+  stage: build_macOS
+  retry:
+    max: 2
+    when: runner_system_failure
+  before_script:
+    - apt-get -qq update && apt-get -qq install zip
+    - echo "$UNITY_CERT" > ./Unity_v2020.x.ulf
+    - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
+  script:
+    - mkdir -p $CI_PROJECT_DIR/mac_build
+    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildOSXUniversalPlayer $CI_PROJECT_DIR/mac_build/build.x86_64
+    - zip -r mac_build.zip $CI_PROJECT_DIR/mac_build/
+  artifacts:
+    paths:
+      - mac_build.zip
     expire_in: 1 week
 
 unit-tests:
