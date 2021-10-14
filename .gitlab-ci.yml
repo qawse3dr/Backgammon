@@ -39,10 +39,9 @@ build_windows:
   script:
     - mkdir -p $CI_PROJECT_DIR/windows_build
     - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildWindows64Player $CI_PROJECT_DIR/windows_build/build.exe
-    - zip -r windows_build.zip $CI_PROJECT_DIR/windows_build/
   artifacts:
     paths:
-      - windows_build.zip
+      - $CI_PROJECT_DIR/windows_build/
     expire_in: 1 week
 
 build_macOS:
@@ -57,11 +56,10 @@ build_macOS:
     - unity-editor -nographics -quit -batchmode -quit -manualLicenseFile ./Unity_v2020.x.ulf || true
   script:
     - mkdir -p $CI_PROJECT_DIR/mac_build
-    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildOSXUniversalPlayer $CI_PROJECT_DIR/mac_build/build.x86_64
-    - zip -r mac_build.zip $CI_PROJECT_DIR/mac_build/
+    - unity-editor -nographics -quit -batchmode -projectPath $CI_PROJECT_DIR -buildOSXUniversalPlayer $CI_PROJECT_DIR/mac_build/build.app
   artifacts:
     paths:
-      - mac_build.zip
+      - $CI_PROJECT_DIR/mac_build/
     expire_in: 1 week
 
 unit-tests:
