@@ -7,7 +7,7 @@ For a given player currently playing, that player could either be in the "roll p
 ROLL = roll phase, waiting for player to roll the die or while die is being rolled
 MOVE = die have been rolled and the player has not used both of their turns (one turn for each die) or the player has not yet been forced to (and accepted) pass
 */
-enum GamePhase
+public enum GamePhase
 {
     ROLL,
     MOVE
@@ -23,7 +23,7 @@ Holds all the information needed to fully describe the state of the given "turn"
     PlayerTurn - which player is currently playing i.e. which player is allowed to take actions in the game at the current time
     GamePhase  - roll phase vs move phase of turn for current player (specified by PlayerTurn)
 */
-struct TurnState {
+public struct TurnState {
    public bool GameOver;
    public bool OnBar;
    public bool Home;
@@ -50,15 +50,17 @@ Holds all the piece objects of the game, organized by their location.
     BlackBar   - array of piece objects to hold all black pieces located on the bar.
     WhiteOff   - array of piece objects to hold all white pieces that have been "beared off" i.e. those that are not located on the board or the bar and are out of play.
     BlackOff   - array of piece objects to hold all black pieces that have been "beared off" i.e. those that are not located on the board or the bar and are out of play.
+    Jagged arrays: https://www.geeksforgeeks.org/c-sharp-jagged-arrays/#:~:text=Prerequisite%3A%20Arrays%20in%20C%23,initialized%20to%20null%20by%20default.
 */
-struct PieceState {
-    public Piece[24][] BlackBoard;
-    public Piece[24][] WhiteBoard;
+public struct PieceState {
+    public Piece[][] BlackBoard;
+    public Piece[][] WhiteBoard;
     public Piece[] WhiteBar;
     public Piece[] BlackBar;
     public Piece[] WhiteOff;
     public Piece[] BlackOff;
-    public PieceState(Piece[24][] BlackBoard, Piece[24][] WhiteBoard, Piece[] WhiteBar, Piece[] BlackBar, Piece[] WhiteOff, Piece[] BlackOff)
+    
+    public PieceState(Piece[][] BlackBoard, Piece[][] WhiteBoard, Piece[] WhiteBar, Piece[] BlackBar, Piece[] WhiteOff, Piece[] BlackOff)
     {
         this.BlackBoard = BlackBoard;
         this.WhiteBoard = WhiteBoard;
@@ -66,6 +68,25 @@ struct PieceState {
         this.BlackBar = BlackBar;
         this.WhiteOff = WhiteOff;
         this.BlackOff = BlackOff;
+    }
+    public override string ToString(){
+        string psString = "BlackBoard:\n" + BoardPiecesToString(BlackBoard) + "\nWhiteBoard:\n" + BoardPiecesToString(WhiteBoard) + "\nWhiteBar:\n" + PiecesToString(WhiteBar) + 
+                          "\nBlackBar:\n" + PiecesToString(BlackBar) + "\nWhiteOff:\n" + PiecesToString(WhiteOff) + "\nBlackOff:\n" + PiecesToString(BlackOff) + "\n";
+        return psString;
+    }
+    private string BoardPiecesToString(Piece[][] ps){
+        string bp = "";
+        for(int i = 1; i <= ps.GetLength(0); i++){
+            bp += $"\tPoint #{i}:\n\t" + PiecesToString(ps[i - 1]);
+        }
+        return bp;
+    }
+    private string PiecesToString(Piece[] ps){
+        string pieces = "\n";
+        for(int i = 1; i <= ps.GetLength(0); i++){
+            pieces += "\t" + ps[i].ToString() + ",\n";
+        }
+        return pieces;
     }
 }
 
@@ -99,7 +120,7 @@ public class GameState : MonoBehaviour
     public PieceState _pieces; 
     public int[] _roll;
     public Player[] _players;
-    public PlayerTurn _playerTurn;
+    public Player _playerTurn;
     public GamePhase _gamePhase;
 
 
@@ -109,32 +130,7 @@ public class GameState : MonoBehaviour
     or a given game i.e. if a game is restarted.
     */
     public GameState()
-    {   Debug.Log($"GameState object initialized");
-
-        // simplify names for attributes
-        this._blackOnBar = _blackOnBar;
-        this._whiteOnBar = _whiteOnBar;
-        this._blackHome = _blackHome;
-        this._whiteHome = _whiteHome;
-        this._pieces = _pieces;
-        this._roll = _roll;
-        this._players = _players;
-        this._playerTurn =_playerTurn;
-        this._gamePhase = _gamePhase;
-        // simplify method names
-        this.InitBoardState = InitBoardState;
-        this.InitPieceState = InitPieceState;
-        this.InitPlayers = InitPlayers;
-        this.InitPlayerTurn = InitPlayerTurn;
-        this.GetTurnState = GetTurnState;
-        this.MovePiece = MovePiece;
-        this.MustPass = MustPass;
-        this.IsGameOver = IsGameOver;
-        this.PossibleMoves = PossibleMoves;
-        this.ToString = ToString;
-        this.PiecesToString = 
-        this.PlayersToString = PlayersToString;
-
+    {   Debug.Log("GameState object initialized");
         InitBoardState();
     }
     
@@ -158,7 +154,7 @@ public class GameState : MonoBehaviour
         // get players playing the game currently 
         _players = InitPlayers();
         // assign one of these players (whichever is Player #1) to start the game
-        _playerTurn = InitPlayersTurn();
+        _playerTurn = InitPlayerTurn();
         // init GamePhase to ROLL since ROLL comes before MOVE
         _gamePhase = GamePhase.ROLL;
         Debug.Log($"GameState: " + ToString() + "\n");
@@ -177,9 +173,9 @@ public class GameState : MonoBehaviour
     Helper method for InitBoardState. Initializes _players attribute, the 2 players of the game to their respective player objects and sets one 
     to be "Player #1" and another to be "Player #2". Also initializes _playersTurn to the Player object of these 2 that is labeled "Player #1".
     */
-    private Players[] InitPlayers(){
+    private Player[] InitPlayers(){
         Debug.Log($"(GameState)InitPlayers: players initialized");
-        p = new Player[2];
+        Player[] p = new Player[2];
         p[0] = new Player(PlayerEnum.Player1);
         p[1] = new Player(PlayerEnum.Player2);
         return p;
@@ -220,7 +216,7 @@ public class GameState : MonoBehaviour
     Returns a boolean value indicating if the current player cannot move any of their pieces with the rolls they have.
     */
     public bool MustPass(){
-        mp = false;
+        bool mp = false;
         Debug.Log($"(GameState)MustPass: it is {mp} that the current player must pass their turn.\n");
         return mp; // default value will not force the player to pass
     }
@@ -230,16 +226,16 @@ public class GameState : MonoBehaviour
     reached a stalemate. Checking for a stalemate may or may not be implemented.
     */
     public bool IsGameOver(){
-        igo = false;
-        Debug.Log($"(GameState)IsGameOver: it is {mp} that the game is over.\n");
-        return gg; // default value allows game to be played infinitely
+        bool igo = false;
+        Debug.Log($"(GameState)IsGameOver: it is {igo} that the game is over.\n");
+        return igo; // default value allows game to be played infinitely
     }
 
     /*
     Returns an array of point indices of points in which a given piece is eligible to move based on the rules of backgammon. 
     */
     public int[] PossibleMoves(Piece piece){
-        moves = new int[];
+        int[] moves = new int[] {};
         string move = "\n" + string.Join(",", moves);
         Debug.Log($"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
         return moves; // default value for now
@@ -248,31 +244,19 @@ public class GameState : MonoBehaviour
     /*
     String description of the entire GameState instance.
     */
-    public override ToString(){
-        string pieces = PiecesToString();
-        string roll = "\n" + string.Join(",", roll);
+    public override string ToString(){
+        string roll = "\n" + string.Join(",", _roll);
         string players = PlayersToString();
-        string playerTurn = _playerTurn.GetPlayerNum();
+        string playerTurn = _playerTurn.GetPlayerNum().ToString();
         return @$"GameState Object: (BlackOnBar: {_blackOnBar},\n
                                      WhiteOnBar: {_whiteOnBar},\n 
                                      BlackHome: {_blackHome},\n 
                                      Whitehome: {_whiteHome},\n
-                                     Pieces: {pieces},\n
+                                     Pieces: {_pieces.ToString()},\n
                                      Roll: {roll},\n 
                                      Players: {players},\n
                                      PlayerTurn: {playerTurn},\n
                                      GamePhase: {_gamePhase})\n"; 
-    }
-
-    /*
-    Helper method for ToString method. Creates a string to describe the _pieces attribute of the GameState instance.
-    */
-    private string PiecesToString(){
-        string pieces = "\n";
-        foreach (Piece piece in _pieces) {
-            pieces += "\t" + piece.toString() + ",\n";
-        }
-        return pieces;
     }
 
     /*
@@ -281,7 +265,7 @@ public class GameState : MonoBehaviour
     private string PlayersToString(){
         string players = "\n";
         foreach (Player player in _players) {
-            playerss += "\t" + player.toString() + ",\n";
+            players += "\t" + player.ToString() + ",\n";
         }
         return players;
 

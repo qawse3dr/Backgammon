@@ -19,8 +19,7 @@ public class Player : MonoBehaviour {
     return this.PlayerNum;
   }
   public Player(PlayerEnum pNum) {
-    this.PlayerNum = PlayerNum;
-    PlayerNum = pNum;
+    this.PlayerNum = pNum;
   }
 
   /** Gets the Piece Color in the future this will be
@@ -36,7 +35,7 @@ public class Player : MonoBehaviour {
     }
   }
 
-  public override ToString(){
+  public override string ToString(){
     return "";
   }
 }
