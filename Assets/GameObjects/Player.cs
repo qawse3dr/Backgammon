@@ -2,7 +2,7 @@
 using UnityEngine;
 /**
     This Enum will be used to keep track of which player
-    the Piece belongs to as well has who's turn it is.
+    the Piece belongs to as well has whose turn it is.
 */
 public enum PlayerEnum { Player1, Player2, NotSet }
 
@@ -15,6 +15,14 @@ public enum PlayerEnum { Player1, Player2, NotSet }
 public class Player : MonoBehaviour {
   public PlayerEnum PlayerNum = PlayerEnum.NotSet;
 
+  public PlayerEnum GetPlayerNum(){
+    return this.PlayerNum;
+  }
+  public Player(PlayerEnum pNum) {
+    this.PlayerNum = PlayerNum;
+    PlayerNum = pNum;
+  }
+
   /** Gets the Piece Color in the future this will be
    *  based of profiles colour but for now it is just hard coded
    */
@@ -26,5 +34,9 @@ public class Player : MonoBehaviour {
     } else {
       return Color.green;
     }
+  }
+
+  public override ToString(){
+    return "";
   }
 }
