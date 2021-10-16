@@ -70,8 +70,8 @@ public struct PieceState {
   public List<Piece> WhiteOff;
   public List<Piece> BlackOff;
 
-  public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar, List<Piece> BlackBar,
-                    List<Piece> WhiteOff, List<Piece> BlackOff) {
+  public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar,
+                    List<Piece> BlackBar, List<Piece> WhiteOff, List<Piece> BlackOff) {
     this.BlackBoard = BlackBoard;
     this.WhiteBoard = WhiteBoard;
     this.WhiteBar = WhiteBar;
@@ -189,8 +189,8 @@ public class GameState {
       bb[i] = new List<Piece>();
       wb[i] = new List<Piece>();
     }
-    PieceState ps =
-        new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(), new List<Piece>());
+    PieceState ps = new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(),
+                                   new List<Piece>());
     return ps;
   }
 
