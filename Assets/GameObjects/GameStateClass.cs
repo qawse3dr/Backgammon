@@ -12,15 +12,18 @@ public enum GamePhase { ROLL, MOVE }
 
 /*
 Holds all the information needed to fully describe the state of the given "turn" of the game
-    OnBar      - indicates whether or not the current player has any pieces on the bar. This is
-important becaue the rules of backgammon dictate that if a player has a piece on the bar, they have
-to use their turn(s) to get it off before they can move any of their pieces on the board Home -
-indicates if the current player has all their pieces in their home section of the board. According
-to the rules of backgammon, a player can only start "bearing off" when all their pieces are in their
-home GameOver   - whether game is complete (a winner or loser has been determined or neither player
-can play for any roll) or still in play PlayerTurn - which player is currently playing i.e. which
-player is allowed to take actions in the game at the current time GamePhase  - roll phase vs move
-phase of turn for current player (specified by PlayerTurn)
+    OnBar     - indicates whether or not the current player has any pieces on the bar. This is
+                important becaue the rules of backgammon dictate that if a player has a piece
+                on the bar, they have to use their turn(s) to get it off before they can move
+                any of their pieces on the board
+    Home      - indicates if the current player has all their pieces in their home section of
+                the board. According to the rules of backgammon, a player can only start
+                "bearing off" when all their pieces are in their home
+    GameOver  - whether game is complete (a winner or loser has been determined or neither player
+                can play for any roll) or still in play PlayerTurn - which player is currently
+                playing i.e. which player is allowed to take actions in the game at the current
+                time.
+    GamePhase - roll phase vs move phase of turn for current player (specified by PlayerTurn)
 */
 public struct TurnState {
   public bool GameOver;
@@ -49,17 +52,18 @@ public struct TurnState {
 /*
 Holds all the piece objects of the game, organized by their location.
     WhiteBoard - 2-dimensional array; first dimension represents the points on the board. Second
-dimension holds all the white pieces on the given point. Points are numbered according to the rules
-of backgammon: point #1 is on the bottom right of the board, increasing to the left, up to point
-#12. Point #13 is located at the top left of the board and points increase along the top to the
-right, ending with point #24 at the top left. BlackBoard - same as WhiteBoard except to hold the
-black pieces on the points. WhiteBar   - array of piece objects to hold all white pieces located on
-the bar. BlackBar   - array of piece objects to hold all black pieces located on the bar. WhiteOff
-- array of piece objects to hold all white pieces that have been "beared off" i.e. those that are
-not located on the board or the bar and are out of play. BlackOff   - array of piece objects to hold
-all black pieces that have been "beared off" i.e. those that are not located on the board or the bar
-and are out of play. Jagged arrays:
-https://www.geeksforgeeks.org/c-sharp-jagged-arrays/#:~:text=Prerequisite%3A%20Arrays%20in%20C%23,initialized%20to%20null%20by%20default.
+                 dimension holds all the white pieces on the given point. Points are numbered
+                 according to the rules of backgammon: point #1 is on the bottom right of the
+                 board, increasing to the left, up to point #12. Point #13 is located at the top
+                 left of the board and points increase along the top to the right, ending with
+                 point #24 at the top left.
+    BlackBoard - same as WhiteBoard except to hold the black pieces on the points.
+    WhiteBar   - array of piece objects to hold all white pieces located on the bar.
+    BlackBar   - array of piece objects to hold all black pieces located on the bar.
+    WhiteOff   - array of piece objects to hold all white pieces that have been "beared off" i.e.
+                 those that are not located on the board or the bar and are out of play.
+    BlackOff   - array of piece objects to hold all black pieces that have been "beared off" i.e.
+                 those that are not located on the board or the bar and are out of play.
 */
 public struct PieceState {
   public List<Piece>[] BlackBoard;
@@ -112,23 +116,29 @@ public struct PieceState {
    holds all information needed to describe the current status of the game (i.e. reference to pieces
    of each team, current player, etc.). The GameState class holds the implementation for all
    substories related to the GameState epic. The GameState class is a code implementation of the UML
-   diagrams created for issue #13. Attributes: _blackOnBar - boolean to indicate whether or not
-   there are any black pieces on the bar (true if length of BlackBar within PieceState struct for
-   _pieces attribute has length greater than 0) _whiteOnBar - boolean to indicate whether or not
-   there are any white pieces on the bar (true if length of WhiteBar within PieceState struct for
-   _pieces attribute has length greater than 0) _blackHome  - boolean to indicate whether or not all
-   black pieces have reached the black home quadrant of the board (or if this has been accomplished
-   and pieces have since been beared off the board) _whiteHome  - boolean to indicate whether or not
-   all white pieces have reached the white home quadrant of the board (or if this has been
-   accomplished and pieces have since been beared off the board) _pieces     - struct of type
-   PieceState which holds arrays of Piece objects divided up by location groupings that the pieces
-   can fall into _roll       - array of the available die rolls that the current player can use for
-   moving their pieces. When a player makes a move, the corresponding value will be removed from
-   this array. Immeadiately after the die is rolled, _roll will have length 2 (for the 2 die) or 4
-   (if doubles are rolled). _players    - array of Player objects holding the 2 players playing the
-   current game. _playerTurn - PlayerTurn type enum that differentiates between which player is
-   currently playing _gamePhase  - GamePhase type enum that differentiates between the "roll phase"
-   or "move phase" of a given players' turn
+   diagrams created for issue #13.
+   Attributes:
+   _blackOnBar - boolean to indicate whether or not there are any black pieces on the bar (true if
+                 length of BlackBar within PieceState struct for _pieces attribute has length
+                 greater than 0) _whiteOnBar - boolean to indicate whether or not there are any
+                 white pieces on the bar (true if length of WhiteBar within PieceState struct for
+                 _pieces attribute has length greater than 0)
+  _blackHome   - boolean to indicate whether or not all black pieces have reached the black home
+                 quadrant of the board (or if this has been accomplished and pieces have since been
+                 beared off the board)
+  _whiteHome   - boolean to indicate whether or not all white pieces have reached the white home
+                 quadrant of the board (or if this has been accomplished and pieces have since been
+                 beared off the board)
+  _pieces      - struct of type PieceState which holds arrays of Piece objects divided up by
+                 location groupings that the pieces can fall into
+  _roll        - array of the available die rolls that the current player can use for moving their
+                 pieces. When a player makes a move, the corresponding value will be removed from
+                 this array. Immeadiately after the die is rolled, _roll will have length 2 (for the
+                 2 die) or 4 (if doubles are rolled).
+  _players     - array of Player objects holding the 2 players playing the current game.
+  _playerTurn  - PlayerTurn type enum that differentiates between which player is currently playing.
+  _gamePhase   - GamePhase type enum that differentiates between the "roll phase" or "move phase" of
+                 a given players' turn.
 */
 public class GameState {
   private bool _blackOnBar;
@@ -254,7 +264,7 @@ public class GameState {
   Parameters:
       piece - Piece object to be moved
       boardIndex - Point number that the piece is located on. -1 for on bar, -2 for beared off/ off
-  board
+                   board
   */
   public void MovePiece(Piece piece, int boardIndex) {
     Debug.Log($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
