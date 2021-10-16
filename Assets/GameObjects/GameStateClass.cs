@@ -62,15 +62,16 @@ and are out of play. Jagged arrays:
 https://www.geeksforgeeks.org/c-sharp-jagged-arrays/#:~:text=Prerequisite%3A%20Arrays%20in%20C%23,initialized%20to%20null%20by%20default.
 */
 public struct PieceState {
-  public Piece[][] BlackBoard;
-  public Piece[][] WhiteBoard;
-  public Piece[] WhiteBar;
-  public Piece[] BlackBar;
-  public Piece[] WhiteOff;
-  public Piece[] BlackOff;
+  public List<Piece>[] BlackBoard;
+  // public Piece[][] BlackBoard;
+  public List<Piece>[] WhiteBoard;
+  public List<Piece> WhiteBar;
+  public List<Piece> BlackBar;
+  public List<Piece> WhiteOff;
+  public List<Piece> BlackOff;
 
-  public PieceState(Piece[][] BlackBoard, Piece[][] WhiteBoard, Piece[] WhiteBar, Piece[] BlackBar,
-                    Piece[] WhiteOff, Piece[] BlackOff) {
+  public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar, List<Piece> BlackBar,
+                    List<Piece> WhiteOff, List<Piece> BlackOff) {
     this.BlackBoard = BlackBoard;
     this.WhiteBoard = WhiteBoard;
     this.WhiteBar = WhiteBar;
@@ -89,7 +90,7 @@ public struct PieceState {
                       PiecesToString(BlackOff, indentIn);
     return psString;
   }
-  private string BoardPiecesToString(Piece[][] ps, string indentOut = "") {
+  private string BoardPiecesToString(List<Piece>[] ps, string indentOut = "") {
     string indentIn = indentOut + "\t";
     string bp = "";
     for (int i = 1; i <= ps.Length; i++) {
@@ -97,10 +98,10 @@ public struct PieceState {
     }
     return bp;
   }
-  private string PiecesToString(Piece[] ps, string indentOut = "") {
+  private string PiecesToString(List<Piece> ps, string indentOut = "") {
     string pieces = "";
     string indentIn = indentOut + "\t";
-    for (int i = 1; i <= ps.Length; i++) {
+    for (int i = 1; i <= ps.Count; i++) {
       pieces += indentIn + ps[i].ToString() + "\n";
     }
     return pieces;
@@ -135,7 +136,7 @@ public class GameState {
   private bool _blackHome;
   private bool _whiteHome;
   private PieceState _pieces;
-  private int[] _roll;
+  private List<int> _roll;
   private Player[] _players;
   private PlayerEnum _playerTurn;
   private GamePhase _gamePhase;
@@ -166,7 +167,7 @@ public class GameState {
     // initialize PieceState struct
     _pieces = InitPieceState();
     // no roll has been done yet so roll should be empty array
-    _roll = new int[] {};
+    _roll = new List<int>();
     // get players playing the game currently
     _players = InitPlayers();
     // assign one of these players (whichever is Player #1) to start the game
@@ -182,14 +183,14 @@ public class GameState {
   */
   private PieceState InitPieceState() {
     Debug.Log($"(GameState)InitPieceState: pieces initialized");
-    Piece[][] wb = new Piece[24][];
-    Piece[][] bb = new Piece[24][];
+    List<Piece>[] bb = new List<Piece>[24];
+    List<Piece>[] wb = new List<Piece>[24];
     for (int i = 0; i < wb.Length; i++) {
-      wb[i] = new Piece[] {};
-      bb[i] = new Piece[] {};
+      bb[i] = new List<Piece>();
+      wb[i] = new List<Piece>();
     }
     PieceState ps =
-        new PieceState(wb, bb, new Piece[] {}, new Piece[] {}, new Piece[] {}, new Piece[] {});
+        new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(), new List<Piece>());
     return ps;
   }
 
@@ -224,21 +225,21 @@ public class GameState {
     int numHome;
     bool home = false;
     if (_playerTurn == PlayerEnum.Player1) {  // current player is white
-      onbar = _pieces.WhiteBar.Length == 0 ? false : true;
+      onbar = _pieces.WhiteBar.Count == 0 ? false : true;
       if (_whiteHome !=
           true) {  // will not change from true once the player has gotten all pieces into home
-        numHome = _pieces.WhiteBoard[0].Length + _pieces.WhiteBoard[1].Length +
-                  _pieces.WhiteBoard[2].Length + _pieces.WhiteBoard[3].Length +
-                  _pieces.WhiteBoard[4].Length + _pieces.WhiteBoard[5].Length;
+        numHome = _pieces.WhiteBoard[0].Count + _pieces.WhiteBoard[1].Count +
+                  _pieces.WhiteBoard[2].Count + _pieces.WhiteBoard[3].Count +
+                  _pieces.WhiteBoard[4].Count + _pieces.WhiteBoard[5].Count;
         home = (numHome == 15) ? true : false;
       }
     } else {  // current player is black
-      onbar = _pieces.BlackBar.Length == 0 ? false : true;
+      onbar = _pieces.BlackBar.Count == 0 ? false : true;
       if (_blackHome !=
           true) {  // will not change from true once the player has gotten all pieces into home
-        numHome = _pieces.BlackBoard[0].Length + _pieces.BlackBoard[1].Length +
-                  _pieces.BlackBoard[2].Length + _pieces.BlackBoard[3].Length +
-                  _pieces.BlackBoard[4].Length + _pieces.BlackBoard[5].Length;
+        numHome = _pieces.BlackBoard[0].Count + _pieces.BlackBoard[1].Count +
+                  _pieces.BlackBoard[2].Count + _pieces.BlackBoard[3].Count +
+                  _pieces.BlackBoard[4].Count + _pieces.BlackBoard[5].Count;
         home = (numHome == 15) ? true : false;
       }
     }
@@ -309,7 +310,7 @@ public class GameState {
       Debug.Log("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
                 _players[0].GetPlayerNum().ToString());
     }
-    _roll = new int[] {};
+    _roll = new List<int>();
     _gamePhase = GamePhase.ROLL;
   }
 

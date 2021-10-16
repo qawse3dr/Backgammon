@@ -22,16 +22,16 @@ public class TestGameState {
   // as long as this doesnt crash, its considered a pass
   [Test]
   public void Test_PieceStateToString() {
-    Piece[][] wb = new Piece[24][];
-    Piece[][] bb = new Piece[24][];
+    List<Piece>[] bb = new List<Piece>[24];
+    List<Piece>[] wb = new List<Piece>[24];
     for (int i = 0; i < wb.Length; i++) {
-      wb[i] = new Piece[] {};
-      bb[i] = new Piece[] {};
+      bb[i] = new List<Piece>();
+      wb[i] = new List<Piece>();
     }
-    Piece[] bbar = new Piece[] {};
-    Piece[] wbar = new Piece[] {};
-    Piece[] wo = new Piece[] {};
-    Piece[] bo = new Piece[] {};
+    List<Piece> bbar = new List<Piece>();
+    List<Piece> wbar = new List<Piece>();
+    List<Piece> wo = new List<Piece>();
+    List<Piece> bo = new List<Piece>();
     PieceState ps = new PieceState(bb, wb, bbar, wbar, wo, bo);
     Debug.Log(ps.ToString());
   }
