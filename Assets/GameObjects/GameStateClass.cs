@@ -27,15 +27,24 @@ public struct TurnState {
    public bool GameOver;
    public bool OnBar;
    public bool Home;
-   public Player PlayerTurn;
+   public PlayerEnum PlayerTurn;
    public GamePhase GamePhase;
-   public TurnState(bool GameOver, bool OnBar, bool Home, Player PlayerTurn, GamePhase GamePhase)
+   public TurnState(bool GameOver, bool OnBar, bool Home, PlayerEnum PlayerTurn, GamePhase GamePhase)
     {
         this.GameOver = GameOver;
         this.OnBar = OnBar;
         this.Home = Home;
         this.PlayerTurn = PlayerTurn;
         this.GamePhase = GamePhase;
+    }
+    public string ToString(string indentOut = ""){
+        string indentIn = indentOut + "\t";
+        string ts = "\n" + indentIn + $"(GameOver: {GameOver}" + 
+                    "\n" + indentIn + $"OnBar: {OnBar}" + 
+                    "\n" + indentIn + $"Home: {Home}" + 
+                    "\n" + indentIn + "PlayerTurn: " + PlayerTurn.ToString() + 
+                    "\n" + indentIn + "GamePhase: " + GamePhase.ToString() + ")";
+        return ts;
     }
 };
 
@@ -69,22 +78,29 @@ public struct PieceState {
         this.WhiteOff = WhiteOff;
         this.BlackOff = BlackOff;
     }
-    public override string ToString(){
-        string psString = "BlackBoard:\n" + BoardPiecesToString(BlackBoard) + "\nWhiteBoard:\n" + BoardPiecesToString(WhiteBoard) + "\nWhiteBar:\n" + PiecesToString(WhiteBar) + 
-                          "\nBlackBar:\n" + PiecesToString(BlackBar) + "\nWhiteOff:\n" + PiecesToString(WhiteOff) + "\nBlackOff:\n" + PiecesToString(BlackOff) + "\n";
+    public string ToString(string indentOut = ""){
+        string indentIn = indentOut + "\t";
+        string psString = "\n" + indentIn + "BlackBoard:\n" + BoardPiecesToString(BlackBoard, indentIn) + 
+                                 indentIn + "WhiteBoard:\n" + BoardPiecesToString(WhiteBoard, indentIn) + 
+                                 indentIn + "WhiteBar:\n" + PiecesToString(WhiteBar, indentIn) + 
+                                 indentIn + "BlackBar:\n" + PiecesToString(BlackBar, indentIn) + 
+                                 indentIn + "WhiteOff:\n" + PiecesToString(WhiteOff, indentIn) + 
+                                 indentIn + "BlackOff:\n" + PiecesToString(BlackOff, indentIn);
         return psString;
     }
-    private string BoardPiecesToString(Piece[][] ps){
+    private string BoardPiecesToString(Piece[][] ps, string indentOut = ""){
+        string indentIn = indentOut + "\t";
         string bp = "";
-        for(int i = 1; i <= ps.GetLength(0); i++){
-            bp += $"\tPoint #{i}:\n\t" + PiecesToString(ps[i - 1]);
+        for(int i = 1; i <= ps.Length; i++){
+            bp += indentIn + $"Point #{i}:\n" + PiecesToString(ps[i - 1], indentIn);
         }
         return bp;
     }
-    private string PiecesToString(Piece[] ps){
-        string pieces = "\n";
-        for(int i = 1; i <= ps.GetLength(0); i++){
-            pieces += "\t" + ps[i].ToString() + ",\n";
+    private string PiecesToString(Piece[] ps, string indentOut = ""){
+        string pieces = "";
+        string indentIn = indentOut + "\t";
+        for(int i = 1; i <= ps.Length; i++){
+            pieces += indentIn + ps[i].ToString() + "\n";
         }
         return pieces;
     }
@@ -111,17 +127,17 @@ public struct PieceState {
    _playerTurn - PlayerTurn type enum that differentiates between which player is currently playing
    _gamePhase  - GamePhase type enum that differentiates between the "roll phase" or "move phase" of a given players' turn
 */
-public class GameState : MonoBehaviour 
+public class GameState
 {
-    public bool _blackOnBar;
-    public bool _whiteOnBar;
-    public bool _blackHome;
-    public bool _whiteHome;
-    public PieceState _pieces; 
-    public int[] _roll;
-    public Player[] _players;
-    public Player _playerTurn;
-    public GamePhase _gamePhase;
+    private bool _blackOnBar;
+    private bool _whiteOnBar;
+    private bool _blackHome;
+    private bool _whiteHome;
+    private PieceState _pieces; 
+    private int[] _roll;
+    private Player[] _players;
+    private PlayerEnum _playerTurn;
+    private GamePhase _gamePhase;
 
 
     /* 
@@ -130,7 +146,7 @@ public class GameState : MonoBehaviour
     or a given game i.e. if a game is restarted.
     */
     public GameState()
-    {   Debug.Log("GameState object initialized");
+    {   Debug.Log("(GameState)Constructor called");
         InitBoardState();
     }
     
@@ -145,8 +161,8 @@ public class GameState : MonoBehaviour
         _blackOnBar = false;
         _whiteOnBar = false;
         // initial layout of board has 5 white pieces in white home and 5 black pieces in black home
-        _blackHome = true;
-        _whiteHome = true;
+        _blackHome = false;
+        _whiteHome = false;
         // initialize PieceState struct
         _pieces = InitPieceState();
         // no roll has been done yet so roll should be empty array
@@ -157,7 +173,7 @@ public class GameState : MonoBehaviour
         _playerTurn = InitPlayerTurn();
         // init GamePhase to ROLL since ROLL comes before MOVE
         _gamePhase = GamePhase.ROLL;
-        Debug.Log($"GameState: " + ToString() + "\n");
+        Debug.Log($"(GameState)Object: \n" + ToString());
     }
 
     /*
@@ -165,7 +181,13 @@ public class GameState : MonoBehaviour
     */
     private PieceState InitPieceState(){
         Debug.Log($"(GameState)InitPieceState: pieces initialized");
-        PieceState ps = new PieceState(null, null, null, null, null, null);
+        Piece[][] wb = new Piece[24][];
+        Piece[][] bb = new Piece[24][];
+        for(int i = 0; i < wb.Length; i++){
+            wb[i] = new Piece[] {};
+            bb[i] = new Piece[] {};
+        }
+        PieceState ps = new PieceState(wb, bb, new Piece[] {}, new Piece[] {}, new Piece[] {}, new Piece[] {});
         return ps;
     }
 
@@ -184,19 +206,36 @@ public class GameState : MonoBehaviour
     /*
     Helper method for InitBoardState. Initializes _playerTurn attribute
     */
-    private Player InitPlayerTurn(){
+    private PlayerEnum InitPlayerTurn(){
         Debug.Log($"(GameState)InitPlayerTurn: current player initialized");
-        return _players[0];
+        return _players[0].GetPlayerNum();
     }
 
     /*
     Returns a TurnState struct holding information on current state of game
+    Recall, player1 = white, player2 = black
     */
     public TurnState GetTurnState(){ 
-        Debug.Log($"(GameState)InitPieceState: pieces initialized");
-        // will need to figure out if current player (_playerTurn) is playing black or white and return values for OnBar and Home corresponding
-        // to that color
-        TurnState ts = new TurnState(this.IsGameOver(), false, false, _playerTurn, _gamePhase);
+        Debug.Log("(GameState)GetTurnState: Creating TurnState struct to describe GameState instance");
+        bool onbar = false;
+        int numHome;
+        bool home = false;
+        if (_playerTurn == PlayerEnum.Player1){ // current player is white
+            onbar = _pieces.WhiteBar.Length == 0 ? false : true;
+            if (_whiteHome != true){ // will not change from true once the player has gotten all pieces into home
+                numHome = _pieces.WhiteBoard[0].Length + _pieces.WhiteBoard[1].Length + _pieces.WhiteBoard[2].Length + _pieces.WhiteBoard[3].Length + _pieces.WhiteBoard[4].Length + _pieces.WhiteBoard[5].Length;
+                home = (numHome == 15) ? true : false;
+            }
+        }
+        else{ // current player is black
+            onbar = _pieces.BlackBar.Length == 0 ? false : true;
+            if (_blackHome != true){ // will not change from true once the player has gotten all pieces into home
+                numHome = _pieces.BlackBoard[0].Length + _pieces.BlackBoard[1].Length + _pieces.BlackBoard[2].Length + _pieces.BlackBoard[3].Length + _pieces.BlackBoard[4].Length + _pieces.BlackBoard[5].Length;
+                home = (numHome == 15) ? true : false;
+            }
+        } 
+        TurnState ts = new TurnState(this.IsGameOver(), onbar, home, _playerTurn, _gamePhase);
+        Debug.Log("(GameState)TurnState Object: " + ts.ToString());
         return ts;
     }
 
@@ -209,7 +248,6 @@ public class GameState : MonoBehaviour
     */
     public void MovePiece(Piece piece, int boardIndex){
         Debug.Log($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " + piece.ToString() + "\n");
-
     }
 
     /*
@@ -227,7 +265,7 @@ public class GameState : MonoBehaviour
     */
     public bool IsGameOver(){
         bool igo = false;
-        Debug.Log($"(GameState)IsGameOver: it is {igo} that the game is over.\n");
+        Debug.Log($"(GameState)IsGameOver: It is {igo} that the game is over.");
         return igo; // default value allows game to be played infinitely
     }
 
@@ -242,30 +280,50 @@ public class GameState : MonoBehaviour
     }
 
     /*
+    Updates GameState variables when the play switches from one player to another.
+    Set to public for unit testing purposes.
+    */
+    public void ChangeCurrentPlayer(){
+        Debug.Log("(GameState)ChangePlayer: Changing the currenlty playing player to the other player.");
+        if (_playerTurn == _players[0].PlayerNum){ // current player is first player in _players array
+            _playerTurn = _players[1].GetPlayerNum();
+            Debug.Log("\t\t" + _players[0].GetPlayerNum().ToString() + " -> " + _players[1].GetPlayerNum().ToString());
+        }
+        else { // current player is first player in _players array
+            _playerTurn = _players[0].GetPlayerNum();
+            Debug.Log("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " + _players[0].GetPlayerNum().ToString());
+        }
+        _roll = new int[] {};
+        _gamePhase = GamePhase.ROLL;
+    }
+
+    /*
     String description of the entire GameState instance.
     */
     public override string ToString(){
-        string roll = "\n" + string.Join(",", _roll);
-        string players = PlayersToString();
-        string playerTurn = _playerTurn.GetPlayerNum().ToString();
-        return @$"GameState Object: (BlackOnBar: {_blackOnBar},\n
-                                     WhiteOnBar: {_whiteOnBar},\n 
-                                     BlackHome: {_blackHome},\n 
-                                     Whitehome: {_whiteHome},\n
-                                     Pieces: {_pieces.ToString()},\n
-                                     Roll: {roll},\n 
-                                     Players: {players},\n
-                                     PlayerTurn: {playerTurn},\n
-                                     GamePhase: {_gamePhase})\n"; 
+        string indent = "\t";
+        string roll = string.Join(",", _roll);
+        string players = PlayersToString(indent);
+        string playerTurn = _playerTurn.ToString();
+        return indent + $"(BlackOnBar: {_blackOnBar}\n" + 
+               indent + $"WhiteOnBar: {_whiteOnBar}\n" + 
+               indent + $"BlackHome: {_blackHome}\n" + 
+               indent + $"Whitehome: {_whiteHome}\n" + 
+               indent + $"Pieces: {_pieces.ToString(indent)}" + 
+               indent + $"Roll: " + roll + "\n" + 
+               indent + $"Players: " + players + 
+               indent + $"PlayerTurn: " + playerTurn + "\n" + 
+               indent + $"GamePhase: {_gamePhase})";
     }
 
     /*
     Helper method for ToString method. Creates a string to describe the _players attribute of the GameState instance.
     */
-    private string PlayersToString(){
+    private string PlayersToString(string indentOut = ""){
+        string indentIn = indentOut + "\t";
         string players = "\n";
         foreach (Player player in _players) {
-            players += "\t" + player.ToString() + ",\n";
+            players += indentIn + player.ToString() + ",\n";
         }
         return players;
 
