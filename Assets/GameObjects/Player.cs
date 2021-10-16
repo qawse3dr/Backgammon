@@ -16,7 +16,7 @@ public enum PlayerEnum { Player1, Player2, NotSet }
 public class Player {
   public PlayerEnum PlayerNum = PlayerEnum.NotSet;
 
-  public PlayerEnum GetPlayerNum(){
+  public PlayerEnum GetPlayerNum() {
     return PlayerNum;
   }
   public Player(PlayerEnum pNum) {
@@ -36,7 +36,7 @@ public class Player {
     }
   }
 
-  public override string ToString(){
+  public override string ToString() {
     return "insert player info here";
   }
 }

@@ -22,15 +22,15 @@ public class Piece : MonoBehaviour {
 
   // The player who's Piece this is
   private Player _owner;
-  public Player Owner{
-    get{return _owner;}
-    set{
+  public Player Owner {
+    get { return _owner; }
+    set {
       _owner = value;
       SetColour();
     }
   }
 
-  public void SetColour(){
+  public void SetColour() {
     SpriteRenderer renderer;
     if (TryGetComponent<SpriteRenderer>(out renderer)) {
       renderer.color = Owner.GetPlayerColour();
