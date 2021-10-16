@@ -21,15 +21,16 @@ public class Piece : MonoBehaviour {
   private bool _isPickedUp;
 
   // The player who's Piece this is
-  public Player Owner;
+  private Player _owner;
+  public Player Owner {
+    get { return _owner; }
+    set {
+      _owner = value;
+      SetColour();
+    }
+  }
 
-  // Start is called before the first frame update
-  public void Start() {
-    _onBar = false;
-    _inHome = false;
-    _boardIndex = 0;
-    _isPickedUp = false;
-
+  public void SetColour() {
     SpriteRenderer renderer;
     if (TryGetComponent<SpriteRenderer>(out renderer)) {
       renderer.color = Owner.GetPlayerColour();
@@ -37,6 +38,14 @@ public class Piece : MonoBehaviour {
     } else {
       Debug.Log($"Warn: Unable to get rendered for piece color will not be updated: {ToString()}");
     }
+  }
+
+  // Start is called before the first frame update
+  public void Start() {
+    _onBar = false;
+    _inHome = false;
+    _boardIndex = 0;
+    _isPickedUp = false;
   }
 
   public bool PickUpOrDrop() {

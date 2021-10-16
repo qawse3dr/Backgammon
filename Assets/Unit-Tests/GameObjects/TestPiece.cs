@@ -10,8 +10,7 @@ public class TestPiece {
   private Piece _piece;
   [SetUp]
   public void SetUp() {
-    _player = new GameObject("Player", typeof(Player)).GetComponent<Player>();
-    _player.PlayerNum = PlayerEnum.Player2;
+    _player = new Player(PlayerEnum.Player1);
     _pieceGameObject = new GameObject("Piece", typeof(Piece), typeof(SpriteRenderer));
     _piece = _pieceGameObject.GetComponent<Piece>();
     _piece.Owner = _player;
@@ -23,9 +22,9 @@ public class TestPiece {
     Assert.AreEqual(_player.GetPlayerColour(),
                     _pieceGameObject.GetComponent<SpriteRenderer>().color);
 
-    _player.PlayerNum = PlayerEnum.Player2;
-    _piece.Start();
-    Assert.AreEqual(_player.GetPlayerColour(),
+    Player player2 = new Player(PlayerEnum.Player2);
+    _piece.Owner = player2;
+    Assert.AreEqual(player2.GetPlayerColour(),
                     _pieceGameObject.GetComponent<SpriteRenderer>().color);
   }
 
