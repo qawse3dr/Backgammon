@@ -1,5 +1,6 @@
 
 using UnityEngine;
+
 /**
     This Enum will be used to keep track of which player
     the Piece belongs to as well has whose turn it is.
@@ -12,11 +13,11 @@ public enum PlayerEnum { Player1, Player2, NotSet }
  * based on PlayerEnum, but can also have unique
  * attributes for example Piece colour, name, stats
  */
-public class Player : MonoBehaviour {
+public class Player {
   public PlayerEnum PlayerNum = PlayerEnum.NotSet;
 
   public PlayerEnum GetPlayerNum(){
-    return this.PlayerNum;
+    return PlayerNum;
   }
   public Player(PlayerEnum pNum) {
     this.PlayerNum = pNum;
@@ -36,6 +37,6 @@ public class Player : MonoBehaviour {
   }
 
   public override string ToString(){
-    return "";
+    return "insert player info here";
   }
 }
