@@ -157,7 +157,7 @@ public class GameState {
   the board to be initialized multiple times or a given game i.e. if a game is restarted.
   */
   public GameState() {
-    Debug.Log("(GameState)Constructor called");
+    Logger.Debug("(GameState)Constructor called");
     InitBoardState();
   }
 
@@ -167,7 +167,7 @@ public class GameState {
   organizes them into their correct location groupings withint the PieceState struct.
   */
   public void InitBoardState() {
-    Debug.Log($"(GameState)InitBoardState: game and board initialized");
+    Logger.Debug($"(GameState)InitBoardState: game and board initialized");
     // no pieces start off on the bar
     _blackOnBar = false;
     _whiteOnBar = false;
@@ -184,7 +184,7 @@ public class GameState {
     _playerTurn = InitPlayerTurn();
     // init GamePhase to ROLL since ROLL comes before MOVE
     _gamePhase = GamePhase.ROLL;
-    Debug.Log($"(GameState)Object: \n" + ToString());
+    Logger.Debug($"(GameState)Object: \n" + ToString());
   }
 
   /*
@@ -192,7 +192,7 @@ public class GameState {
   location groupings of the PieceState struct.
   */
   private PieceState InitPieceState() {
-    Debug.Log($"(GameState)InitPieceState: pieces initialized");
+    Logger.Debug($"(GameState)InitPieceState: pieces initialized");
     List<Piece>[] bb = new List<Piece>[24];
     List<Piece>[] wb = new List<Piece>[24];
     for (int i = 0; i < wb.Length; i++) {
@@ -210,7 +210,7 @@ public class GameState {
   initializes _playersTurn to the Player object of these 2 that is labeled "Player #1".
   */
   private Player[] InitPlayers() {
-    Debug.Log($"(GameState)InitPlayers: players initialized");
+    Logger.Debug($"(GameState)InitPlayers: players initialized");
     Player[] p = new Player[2];
     p[0] = new Player(PlayerEnum.Player1);
     p[1] = new Player(PlayerEnum.Player2);
@@ -221,7 +221,7 @@ public class GameState {
   Helper method for InitBoardState. Initializes _playerTurn attribute
   */
   private PlayerEnum InitPlayerTurn() {
-    Debug.Log($"(GameState)InitPlayerTurn: current player initialized");
+    Logger.Info($"(GameState)InitPlayerTurn: current player initialized");
     return _players[0].GetPlayerNum();
   }
 
@@ -230,7 +230,8 @@ public class GameState {
   Recall, player1 = white, player2 = black
   */
   public TurnState GetTurnState() {
-    Debug.Log("(GameState)GetTurnState: Creating TurnState struct to describe GameState instance");
+    Logger.Debug(
+        "(GameState)GetTurnState: Creating TurnState struct to describe GameState instance");
     bool onbar = false;
     int numHome;
     bool home = false;
@@ -254,7 +255,7 @@ public class GameState {
       }
     }
     TurnState ts = new TurnState(this.IsGameOver(), onbar, home, _playerTurn, _gamePhase);
-    Debug.Log("(GameState)TurnState Object: " + ts.ToString());
+    Logger.Debug("(GameState)TurnState Object: " + ts.ToString());
     return ts;
   }
 
@@ -267,8 +268,8 @@ public class GameState {
                    board
   */
   public void MovePiece(Piece piece, int boardIndex) {
-    Debug.Log($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
-              piece.ToString() + "\n");
+    Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
+                piece.ToString() + "\n");
   }
 
   /*
@@ -277,7 +278,7 @@ public class GameState {
   */
   public bool MustPass() {
     bool mp = false;
-    Debug.Log($"(GameState)MustPass: it is {mp} that the current player must pass their turn.\n");
+    Logger.Info($"(GameState)MustPass: it is {mp} that the current player must pass their turn.\n");
     return mp;  // default value will not force the player to pass
   }
 
@@ -288,7 +289,7 @@ public class GameState {
   */
   public bool IsGameOver() {
     bool igo = false;
-    Debug.Log($"(GameState)IsGameOver: It is {igo} that the game is over.");
+    Logger.Info($"(GameState)IsGameOver: It is {igo} that the game is over.");
     return igo;  // default value allows game to be played infinitely
   }
 
@@ -299,7 +300,7 @@ public class GameState {
   public int[] PossibleMoves(Piece piece) {
     int[] moves = new int[] {};
     string move = "\n" + string.Join(",", moves);
-    Debug.Log(
+    Logger.Info(
         $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
     return moves;  // default value for now
   }
@@ -309,16 +310,16 @@ public class GameState {
   Set to public for unit testing purposes.
   */
   public void ChangeCurrentPlayer() {
-    Debug.Log(
-        "(GameState)ChangePlayer: Changing the currenlty playing player to the other player.");
+    Logger.Info(
+        "(GameState)ChangePlayer: Changing the currently playing player to the other player.");
     if (_playerTurn == _players[0].PlayerNum) {  // current player is first player in _players array
       _playerTurn = _players[1].GetPlayerNum();
-      Debug.Log("\t\t" + _players[0].GetPlayerNum().ToString() + " -> " +
-                _players[1].GetPlayerNum().ToString());
+      Logger.Debug("\t\t" + _players[0].GetPlayerNum().ToString() + " -> " +
+                   _players[1].GetPlayerNum().ToString());
     } else {  // current player is first player in _players array
       _playerTurn = _players[0].GetPlayerNum();
-      Debug.Log("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
-                _players[0].GetPlayerNum().ToString());
+      Logger.Debug("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
+                   _players[0].GetPlayerNum().ToString());
     }
     _roll = new List<int>();
     _gamePhase = GamePhase.ROLL;

@@ -10,12 +10,12 @@ using UnityEngine.SceneManagement;
  */
 public class MenuSystemController : MonoBehaviour {
   public void StartGameOnClick() {
-    Debug.Log("Starting Game Scene...");
+    Logger.Info("Starting Game Scene...");
     SceneManager.LoadScene("Backgammon");
   }
 
   public void QuitGameOnClick() {
-    Debug.Log("Exiting Game...");
+    Logger.Info("Exiting Game...");
     Application.Quit();
   }
 }

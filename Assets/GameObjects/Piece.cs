@@ -34,9 +34,8 @@ public class Piece : MonoBehaviour {
     SpriteRenderer renderer;
     if (TryGetComponent<SpriteRenderer>(out renderer)) {
       renderer.color = Owner.GetPlayerColour();
-      Debug.Log($"Test: {ToString()}");
     } else {
-      Debug.Log($"Warn: Unable to get rendered for piece color will not be updated: {ToString()}");
+      Logger.Warn($"Unable to get rendered for piece color will not be updated: {ToString()}");
     }
   }
 
@@ -49,7 +48,7 @@ public class Piece : MonoBehaviour {
   }
 
   public bool PickUpOrDrop() {
-    Debug.Log($"Piece PickedUp or Dropped: {ToString()}");
+    Logger.Debug($"Piece PickedUp or Dropped: {ToString()}");
     return true;
   }
 
@@ -63,7 +62,7 @@ public class Piece : MonoBehaviour {
   public void MoveToBar() {
     _onBar = true;
     _boardIndex = -1;
-    Debug.Log($"Piece move to bar: {ToString()}");
+    Logger.Info($"Piece move to bar: {ToString()}");
   }
 
   /* Movies Piece into home. assumes that all checks have already occurred. */
@@ -71,7 +70,7 @@ public class Piece : MonoBehaviour {
     _onBar = false;
     _boardIndex = -1;
     _inHome = true;
-    Debug.Log($"Piece move to home: {ToString()}");
+    Logger.Info($"Piece move to home: {ToString()}");
 
     // TODO add moving the piece asset to the correct home
   }
@@ -82,7 +81,7 @@ public class Piece : MonoBehaviour {
   public void MoveToBoardIndex(int boardIndex) {
     _boardIndex = boardIndex;
     _onBar = false;
-    Debug.Log($"Piece moved: {ToString()}");
+    Logger.Info($"Piece moved: {ToString()}");
   }
 
   public PieceStatus GetPieceStatus() {
