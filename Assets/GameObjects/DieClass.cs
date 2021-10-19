@@ -16,7 +16,7 @@ public class Die {
     private set {        // this should only be set once when object is instantiated
       if (0 <= value) {  // ensure that the number of die is non-negative
         _numDie = value;
-        Debug.Log(
+        Logger.Debug(
             $"(Die)(NumDie set) NumDie property used to set value of _numDie field to {value}");
       } else {
         throw new InvalidOperationException(
@@ -69,7 +69,7 @@ public class Die {
   with a seed value from the Seeds field, corresponding to its index in the _Die list
   */
   public Die(int dieCount, List<int> seeds) {
-    Debug.Log("(Die)Constructor called");
+    Logger.Debug("(Die)Constructor called");
     NumDie = dieCount;
     Seeds = seeds;
     Rolls = new List<int>();
@@ -87,7 +87,7 @@ public class Die {
   rolls. Note that a seperate "get" call is needed to retrieve thesa new values.
   */
   public void Roll() {
-    Debug.Log($"(Die)1.Roll: {NumDie} Dice objects of Die rolled.");
+    Logger.Debug($"(Die)1.Roll: {NumDie} Dice objects of Die rolled.");
     foreach (Dice d in _Die) {
       d.RollDice();
     }
@@ -98,7 +98,7 @@ public class Die {
     if (Rolls.All(o => o == Rolls[0])) {  // all die roll to the same values (i.e. doubles)
       Doubles(Rolls[0]);
     }
-    Debug.Log($"(Die)2.Roll: Rolls: (" + string.Join(", ", Rolls.ToArray()) + ")");
+    Logger.Debug($"(Die)2.Roll: Rolls: (" + string.Join(", ", Rolls.ToArray()) + ")");
   }
 
   /*
@@ -124,7 +124,7 @@ public class Die {
           "Attempting to remove a roll for Die object that does not exist (or has already been removed).");
     } else {
       int index = Rolls.IndexOf(roll);
-      Debug.Log($"(Die)ClearRoll: {roll} from available rolls removed.");
+      Logger.Debug($"(Die)ClearRoll: {roll} from available rolls removed.");
       Rolls.Remove(roll);
       _Die[index].Grey();
     }

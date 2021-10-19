@@ -18,7 +18,7 @@ public class Dice {
       if ((1 <= value) &&
           (value <= 6)) {  // ensure that the roll is being set to a valid integer between 1 and 6
         _roll = value;
-        Debug.Log($"(Dice)(Roll set) Roll property used to set value of _roll field to {value}");
+        Logger.Debug($"(Dice)(Roll set) Roll property used to set value of _roll field to {value}");
       } else {
         throw new InvalidOperationException(
             "Attempting to set Dice object's _roll field to out of range value (less than 1 or greater than 6).");
@@ -33,7 +33,7 @@ public class Dice {
            rolls associated with them.
   */
   public Dice(int seed = 11) {
-    Debug.Log("(Dice)Constructor called");
+    Logger.Debug("(Dice)Constructor called");
     randGen = new Random(seed);  // initialize random number generator
   }
 
@@ -42,7 +42,7 @@ public class Dice {
   needed to retrieve this new value.
   */
   public void RollDice() {
-    Debug.Log("(Dice)Dice rolled.");
+    Logger.Debug("(Dice)Dice rolled.");
     Roll = randGen.Next(1, 7);  // int between 1 and 6
   }
 
@@ -51,7 +51,7 @@ public class Dice {
   die's color to gray to indicate that a move corresponding to that die has been made.
   */
   public void Grey() {
-    Debug.Log(
+    Logger.Debug(
         $"(Dice)Grey: Dice background color changed to Grey to indicate that it's rolled has been used.");
   }
 }
