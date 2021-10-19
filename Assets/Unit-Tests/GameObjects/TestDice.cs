@@ -10,8 +10,8 @@ public class TestDiceDie {
     Dice d = new Dice();
     int r;
     for (int i = 0; i < 20; i++) {  // repeat test
-      d.Roll();
-      r = d._Roll;
+      d.RollDice();
+      r = d.Roll;
       Assert.True(1 <= r);
       Assert.True(6 >= r);
     }
@@ -20,14 +20,14 @@ public class TestDiceDie {
   [Test]
   public void Test_SetRollSuccess() {
     Dice d = new Dice();
-    d._Roll = 3;
-    Assert.AreEqual(3, d._Roll);
+    d.Roll = 3;
+    Assert.AreEqual(3, d.Roll);
   }
 
   [Test]
   public void Test_SetRollFail() {
     Dice d = new Dice();
-    Assert.Throws<System.InvalidOperationException>(() => d._Roll = 0);
+    Assert.Throws<System.InvalidOperationException>(() => d.Roll = 0);
   }
 
   // // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
