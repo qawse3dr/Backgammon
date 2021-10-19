@@ -29,7 +29,7 @@ public class MouseClickAndHoverText : MonoBehaviour,
     // Try to get text component, if it doesn't exist we should exit with error as this script needs
     // a text component
     if (!TryGetComponent<Text>(out _text)) {
-      Debug.LogError("Required Text Object is not found");
+      Logger.Error("Required Text Object is not found");
       Application.Quit(1);
     }
 

@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
  */
 public class BackgammonUIController : MonoBehaviour {
   public void MainMenuOnClick() {
-    Debug.Log("Exiting Game Going back to MainMenu.");
+    Logger.Info("Exiting Game Going back to MainMenu.");
 
     /* A warning should probably be added explain it will
      * not save the current state of the game and all progress will
