@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-
+using Logger = LNAR.Logger;
 public class TestDie {
   [Test]
   public void Test_DieInit() {
@@ -88,19 +88,9 @@ public class TestDie {
     List<int> seeds = new List<int> { 1, 2 };
     Die d = new Die(2, seeds);
     string str1 = d.ToString("");
-    Debug.Log(str1);
+    Logger.Debug(str1);
     d.Roll();
     str1 = d.ToString("");
-    Debug.Log(str1);
+    Logger.Debug(str1);
   }
-
-  // // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-  // // `yield return null;` to skip a frame.
-  // [UnityTest]
-  // public IEnumerator TestDieWithEnumeratorPasses()
-  // {
-  //     // Use the Assert class to test conditions.
-  //     // Use yield to skip a frame.
-  //     yield return null;
-  // }
 }

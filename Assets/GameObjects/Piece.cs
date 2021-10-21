@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-
+using Logger = LNAR.Logger;
 /**
  * This will give infomation about where the Piece is on
  * the board.
@@ -90,7 +90,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
   public void Update() {
     if (_isPickedUp) {
-      ;
       // There seems to be a bug where the mousePos.z can't be the same as the mouse or else
       // OnClicks Won't work. So a work around is to just set it to 3.
       Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -124,14 +123,17 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
       // Failed to place pieces start move back animation
       // TODO Cool animation ??
       transform.position = _previousPostion;
+      return true;
 
     } else {
       if (GameHandler.Game.SetPieceInHand(this)) {
         _isPickedUp = true;
         _previousPostion = transform.position;
+        return true;
       }
     }
-    return true;
+    // Failed to pickup or wasn't moved
+    return false;
   }
 
   public void hoverShowMoves() {}

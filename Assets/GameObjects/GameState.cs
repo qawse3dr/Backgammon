@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-
+using Logger = LNAR.Logger;
 /*
 For a given player currently playing, that player could either be in the "roll phase" or "move
 phase" of their turn. ROLL = roll phase, waiting for player to roll the die or while die is being
@@ -287,13 +287,26 @@ public class GameState {
     if (PossibleMoves(piece).Contains(boardIndex)) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
-      if (_playerTurn == PlayerEnum.Player1) {
+      if (piece.Owner.GetPlayerNum() == PlayerEnum.Player1) {
+        if (_pieces.BlackBoard[boardIndex - 1].Count > 1) {
+          Logger.Info("Invalid Move to many opponent pieces");
+          return false;
+        } else if (_pieces.BlackBoard[boardIndex - 1].Count == 1) {
+          Logger.Info("Overtaking not implemented yet");
+        }
         if (_pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
           _pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
         }
         _pieces.WhiteBoard[boardIndex - 1].Add(piece);
 
       } else {
+        // Deals with pieces on opponet's board blocking your Move();
+        if (_pieces.WhiteBoard[boardIndex - 1].Count > 1) {
+          Logger.Info("Invalid Move to many opponent pieces");
+          return false;
+        } else if (_pieces.WhiteBoard[boardIndex - 1].Count == 1) {
+          Logger.Info("Overtaking not implemented yet");
+        }
         if (_pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
           _pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
         }

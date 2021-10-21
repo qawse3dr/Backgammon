@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;  // for Enumerable
+using Logger = LNAR.Logger;
 
 /*
 Represents a set of dice that can all be rolled at the same time.

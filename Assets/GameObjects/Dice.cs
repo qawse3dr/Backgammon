@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using Random = System.Random;  // unity and c# both have Random classes
-
+using Logger = LNAR.Logger;
 /*
 Class to represent a single dice that can be rolled "randomly"
 */

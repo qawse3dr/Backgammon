@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameHandler : MonoBehaviour {
   public static GameState Game = null;
   // Start is called before the first frame update
-  void Start() {
+  public void Start() {
     if (Game == null)
       Game = new GameState();
   }
