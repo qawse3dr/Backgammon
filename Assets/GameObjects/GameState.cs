@@ -131,10 +131,11 @@ public struct PieceState {
                  beared off the board)
   _pieces      - struct of type PieceState which holds arrays of Piece objects divided up by
                  location groupings that the pieces can fall into
-  _roll        - array of the available die rolls that the current player can use for moving their
-                 pieces. When a player makes a move, the corresponding value will be removed from
-                 this array. Immeadiately after the die is rolled, _roll will have length 2 (for the
-                 2 die) or 4 (if doubles are rolled).
+  _die         - a Die object which holds 2 Dice objects that can be "randomly" rolled.
+                 !!!!!!! When a
+                 player makes a move, the corresponding value will be removed from this array.
+                 Immeadiately after the die is rolled, _roll will have length 2 (for the 2 die) or 4
+                 (if doubles are rolled).
   _players     - array of Player objects holding the 2 players playing the current game.
   _playerTurn  - PlayerTurn type enum that differentiates between which player is currently playing.
   _gamePhase   - GamePhase type enum that differentiates between the "roll phase" or "move phase" of
@@ -146,7 +147,7 @@ public class GameState {
   private bool _blackHome;
   private bool _whiteHome;
   private PieceState _pieces;
-  private List<int> _roll;
+  private Die _die;
   private Player[] _players;
   private PlayerEnum _playerTurn;
   private GamePhase _gamePhase;
@@ -177,7 +178,7 @@ public class GameState {
     // initialize PieceState struct
     _pieces = InitPieceState();
     // no roll has been done yet so roll should be empty array
-    _roll = new List<int>();
+    _die = new Die(2, new List<int> { 1, 2 });
     // get players playing the game currently
     _players = InitPlayers();
     // assign one of these players (whichever is Player #1) to start the game
@@ -321,7 +322,7 @@ public class GameState {
       Logger.Debug("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
                    _players[0].GetPlayerNum().ToString());
     }
-    _roll = new List<int>();
+    _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
   }
 
@@ -330,12 +331,12 @@ public class GameState {
   */
   public override string ToString() {
     string indent = "\t";
-    string roll = string.Join(",", _roll);
+    string die = _die.ToString(indent);
     string players = PlayersToString(indent);
     string playerTurn = _playerTurn.ToString();
     return indent + $"(BlackOnBar: {_blackOnBar}\n" + indent + $"WhiteOnBar: {_whiteOnBar}\n" +
            indent + $"BlackHome: {_blackHome}\n" + indent + $"Whitehome: {_whiteHome}\n" + indent +
-           $"Pieces: {_pieces.ToString(indent)}" + indent + $"Roll: " + roll + "\n" + indent +
+           $"Pieces: {_pieces.ToString(indent)}" + indent + $"Die: " + die + "\n" + indent +
            $"Players: " + players + indent + $"PlayerTurn: " + playerTurn + "\n" + indent +
            $"GamePhase: {_gamePhase})";
   }
