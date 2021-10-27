@@ -29,14 +29,4 @@ public class TestDiceDie {
     Dice d = new Dice();
     Assert.Throws<System.InvalidOperationException>(() => d.Roll = 0);
   }
-
-  // // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-  // // `yield return null;` to skip a frame.
-  // [UnityTest]
-  // public IEnumerator TestDiceDieWithEnumeratorPasses()
-  // {
-  //     // Use the Assert class to test conditions.
-  //     // Use yield to skip a frame.
-  //     yield return null;
-  // }
 }

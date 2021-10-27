@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using Logger = LNAR.Logger;
 
 /** This script should be attached to a UI>Text object and will control the behaviours
  * of it when the mouse hovers over it as well as adds OnClick support

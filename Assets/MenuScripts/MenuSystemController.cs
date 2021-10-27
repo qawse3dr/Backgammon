@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logger = LNAR.Logger;
 
 /** Menu Class should deal with all the main logic included in the menu
  * including but not limited to:

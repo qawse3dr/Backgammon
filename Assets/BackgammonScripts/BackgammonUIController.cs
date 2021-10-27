@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using Logger = LNAR.Logger;
 /** This calls is responsible for all UI elements on the screen
  * This includes text popups, and so on but not the gameboard itself
  * that should be handled somewhere else

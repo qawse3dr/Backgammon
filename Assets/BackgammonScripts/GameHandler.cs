@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameHandler : MonoBehaviour {
-  public static GameState Game;
+  public static GameState Game = null;
   // Start is called before the first frame update
-  void Start() {
-    Game = new GameState();
+  public void Start() {
+    if (Game == null)
+      Game = new GameState();
   }
 
   // Update is called once per frame

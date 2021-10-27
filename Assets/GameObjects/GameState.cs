@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
-
+using Logger = LNAR.Logger;
 /*
 For a given player currently playing, that player could either be in the "roll phase" or "move
 phase" of their turn. ROLL = roll phase, waiting for player to roll the die or while die is being
@@ -67,13 +68,17 @@ Holds all the piece objects of the game, organized by their location.
 */
 public struct PieceState {
   public List<Piece>[] BlackBoard;
-  // public Piece[][] BlackBoard;
   public List<Piece>[] WhiteBoard;
   public List<Piece> WhiteBar;
   public List<Piece> BlackBar;
   public List<Piece> WhiteOff;
   public List<Piece> BlackOff;
 
+  // A reference to the current Piece in hand
+  // If this is set to null it means no piece is
+  // being held, and a piece can only be picked up
+  // if this is set to null.
+  public Piece PieceInHand;
   public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar,
                     List<Piece> BlackBar, List<Piece> WhiteOff, List<Piece> BlackOff) {
     this.BlackBoard = BlackBoard;
@@ -82,6 +87,7 @@ public struct PieceState {
     this.BlackBar = BlackBar;
     this.WhiteOff = WhiteOff;
     this.BlackOff = BlackOff;
+    this.PieceInHand = null;
   }
   public string ToString(string indentOut = "") {
     string indentIn = indentOut + "\t";
@@ -148,8 +154,15 @@ public class GameState {
   private bool _whiteHome;
   private PieceState _pieces;
   private Die _die;
+  public PieceState Pieces {
+    get => _pieces;
+  private
+    set { _pieces = value; }
+  }
+  private List<int> _roll;
   private Player[] _players;
   private PlayerEnum _playerTurn;
+  public PlayerEnum PlayerTurn => _playerTurn;
   private GamePhase _gamePhase;
 
   /*
@@ -268,9 +281,70 @@ public class GameState {
       boardIndex - Point number that the piece is located on. -1 for on bar, -2 for beared off/ off
                    board
   */
-  public void MovePiece(Piece piece, int boardIndex) {
+  public bool MovePiece(Piece piece, int boardIndex) {
     Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
                 piece.ToString() + "\n");
+    if (PossibleMoves(piece).Contains(boardIndex)) {
+      Logger.Info(
+          $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
+      if (piece.Owner.GetPlayerNum() == PlayerEnum.Player1) {
+        if (_pieces.BlackBoard[boardIndex - 1].Count > 1) {
+          Logger.Info("Invalid Move to many opponent pieces");
+          return false;
+        } else if (_pieces.BlackBoard[boardIndex - 1].Count == 1) {
+          Logger.Info("Overtaking not implemented yet");
+        }
+        if (_pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
+          _pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
+        }
+        _pieces.WhiteBoard[boardIndex - 1].Add(piece);
+
+      } else {
+        // Deals with pieces on opponet's board blocking your Move();
+        if (_pieces.WhiteBoard[boardIndex - 1].Count > 1) {
+          Logger.Info("Invalid Move to many opponent pieces");
+          return false;
+        } else if (_pieces.WhiteBoard[boardIndex - 1].Count == 1) {
+          Logger.Info("Overtaking not implemented yet");
+        }
+        if (_pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
+          _pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
+        }
+        _pieces.BlackBoard[boardIndex - 1].Add(piece);
+      }
+
+      // Place The piece asset on the board
+      if (boardIndex <= 24) {
+        float deltaX = 0, deltaY = 0;
+        if (boardIndex <= 6) {
+          deltaX = 5.263f - ((boardIndex - 1) * 0.811925f);
+        } else if (boardIndex <= 12) {
+          deltaX = -0.49f - ((boardIndex - 7) * 0.811925f);
+        } else if (boardIndex <= 18) {
+          deltaX = -4.534999f + ((boardIndex - 13) * 0.811925f);
+        } else if (boardIndex <= 24) {
+          deltaX = 1.234f + ((boardIndex - 19) * 0.811925f);
+        }
+
+        deltaY = (_pieces.WhiteBoard[boardIndex - 1].Count +
+                  _pieces.BlackBoard[boardIndex - 1].Count - 1) *
+                 0.5460075f;
+        // Delta y (top board or bottom board)
+        if (boardIndex <= 12) {
+          deltaY = -3.87f + deltaY;
+        } else if (boardIndex <= 24) {
+          deltaY = 1.257f - deltaY;
+        }
+
+        piece.transform.position = new Vector2(deltaX, deltaY);
+        piece.MoveToBoardIndex(boardIndex);
+      }
+
+      return true;
+    } else {
+      Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
+      return false;
+    }
   }
 
   /*
@@ -298,8 +372,9 @@ public class GameState {
   Returns an array of point indices of points in which a given piece is eligible to move based on
   the rules of backgammon.
   */
-  public int[] PossibleMoves(Piece piece) {
-    int[] moves = new int[] {};
+  public List<int> PossibleMoves(Piece piece) {
+    List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12,
+                                      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
     string move = "\n" + string.Join(",", moves);
     Logger.Info(
         $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
@@ -324,6 +399,26 @@ public class GameState {
     }
     _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
+  }
+
+  /**
+   * Attempts to pick up a piece. if a piece is already
+   * held return false
+   * @param piece - piece to pick up, if null It means drop the current piece
+   **/
+  public bool SetPieceInHand(Piece piece) {
+    if (piece == null) {  // Drop piece
+      _pieces.PieceInHand = null;
+      // Todo check if piece can be dropped.
+      return true;
+    } else if (_pieces.PieceInHand != null) {  // Failed
+      Logger.Info("Piece already held", "PIECE");
+      return false;
+    } else {  // Success
+      Logger.Info($"Picking up Piece: {piece.ToString()}");
+      _pieces.PieceInHand = piece;
+      return true;
+    }
   }
 
   /*
