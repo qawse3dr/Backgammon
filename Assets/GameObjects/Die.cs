@@ -36,6 +36,9 @@ public class Die {
     }
   }
 
+  // Doubles were rolled
+  bool _doubles;
+
   /*
   _rolls - a list of the upwards facing faces of all die in the set at a given point in time
            (integers between 1 and 6)
@@ -74,6 +77,7 @@ public class Die {
     NumDie = dieCount;
     Seeds = seeds;
     Rolls = new List<int>();
+    _doubles = false;
     // set _Die
     List<Dice> d = new List<Dice>();
     foreach (var i in Enumerable.Range(0, NumDie)) {
@@ -89,6 +93,7 @@ public class Die {
   */
   public void Roll() {
     Logger.Debug($"(Die)1.Roll: {NumDie} Dice objects of Die rolled.");
+    _doubles = false;
     foreach (Dice d in _Die) {
       d.RollDice();
     }
@@ -98,6 +103,7 @@ public class Die {
     }
     if (Rolls.All(o => o == Rolls[0])) {  // all die roll to the same values (i.e. doubles)
       Doubles(Rolls[0]);
+      _doubles = true;
     }
     Logger.Debug($"(Die)2.Roll: Rolls: (" + string.Join(", ", Rolls.ToArray()) + ")");
   }
@@ -127,7 +133,11 @@ public class Die {
       int index = Rolls.IndexOf(roll);
       Logger.Debug($"(Die)ClearRoll: {roll} from available rolls removed.");
       Rolls.Remove(roll);
-      _Die[index].Grey();
+
+      // Greys out the die if it isn't a double and if it is only do it on 0 and 2
+      if (!_doubles || (_doubles && (Rolls.Count() == 0 || Rolls.Count() == 2))) {
+        _Die[index].IsGrey = true;
+      }
     }
   }
 
@@ -137,4 +147,27 @@ public class Die {
                  string.Join(", ", Rolls.ToArray()) + ")";
     return str;
   }
+
+#if DEBUG_MENU
+
+  // NOT COMPLETE
+  public void SetDieValue(int oldValue, int newValue) {
+    int index = Rolls.IndexOf(oldValue);
+    if (index != -1) {
+      Rolls[index] = newValue;
+    }
+  }
+
+  // NOT COMPLETE
+  public void ChangeDieState(int dieNum, bool isActive, int value) {
+    if (isActive) {
+    } else {
+      ClearRoll(value);
+      if (_doubles) {
+        if (!_die[0].IsGrey) {
+        }
+      }
+    }
+  }
+#endif
 }

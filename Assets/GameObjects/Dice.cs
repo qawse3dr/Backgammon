@@ -10,7 +10,16 @@ public class Dice {
   private Random randGen;
   // _roll - the upwards facing face of the dice at a given point in time (integer between 1 and 6)
   private int _roll;  // field
-
+  private bool _isGrey;
+  public bool IsGrey {
+    get { return _isGrey; }
+    set {
+      _isGrey = value;
+      if (_isGrey)
+        Grey();
+      // Do un-grey code here
+    }
+  }
   public int Roll  // property
       {
     get { return _roll; }
@@ -43,6 +52,7 @@ public class Dice {
   */
   public void RollDice() {
     Logger.Debug("(Dice)Dice rolled.");
+    IsGrey = false;
     Roll = randGen.Next(1, 7);  // int between 1 and 6
   }
 

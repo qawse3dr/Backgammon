@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor.SceneTemplate;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -14,21 +16,48 @@ public class TestPiece {
   public void SetUp() {
     Logger.Debug("test");
     _player = new Player(PlayerEnum.Player1);
-    _pieceGameObject = new GameObject("Piece", typeof(Piece), typeof(SpriteRenderer));
+
+    _pieceGameObject = CreateMockPieceObject();
     _piece = _pieceGameObject.GetComponent<Piece>();
     _piece.Owner = _player;
     _piece.Start();
   }
+
+  private GameObject CreateMockPieceObject() {
+    GameObject pieceObj = new GameObject("Piece", typeof(Piece));
+    GameObject pieceFlat = new GameObject("PieceFlat", typeof(SpriteRenderer));
+    GameObject pieceFlatBorder = new GameObject("PieceFlat", typeof(SpriteRenderer));
+    GameObject pieceOnSideAsset = new GameObject("PieceOnSideAsset 1");
+    GameObject pieceOnSide = new GameObject("PieceOnSide", typeof(SpriteRenderer));
+    GameObject pieceOnSideBorder = new GameObject("PieceOnSideBorder", typeof(SpriteRenderer));
+
+    // Top layer
+    pieceFlat.transform.parent = pieceObj.transform;
+    pieceFlatBorder.transform.parent = pieceObj.transform;
+    pieceOnSideAsset.transform.parent = pieceObj.transform;
+
+    // second layer for on side
+    pieceOnSide.transform.parent = pieceOnSideAsset.transform;
+    pieceOnSideBorder.transform.parent = pieceOnSideAsset.transform;
+
+    return pieceObj;
+  }
+  private Color GetPieceColour(GameObject gameObject) {
+    foreach (Transform t in gameObject.transform) {
+      if (t.gameObject.name == "PieceFlat") {
+        return t.gameObject.GetComponent<SpriteRenderer>().color;
+      }
+    }
+    return Color.clear;
+  }
   // A Test behaves as an ordinary method
   [Test]
   public void Test_CheckPieceColor() {
-    Assert.AreEqual(_player.GetPlayerColour(),
-                    _pieceGameObject.GetComponent<SpriteRenderer>().color);
+    Assert.AreEqual(_player.GetPlayerColour(), GetPieceColour(_pieceGameObject));
 
     Player player2 = new Player(PlayerEnum.Player2);
     _piece.Owner = player2;
-    Assert.AreEqual(player2.GetPlayerColour(),
-                    _pieceGameObject.GetComponent<SpriteRenderer>().color);
+    Assert.AreEqual(player2.GetPlayerColour(), GetPieceColour(_pieceGameObject));
   }
 
   // Tests moving a piece to bar
@@ -61,6 +90,7 @@ public class TestPiece {
   public void Test_PickUpPiece() {
     // Create gamestate object
     GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.Start();
@@ -75,6 +105,7 @@ public class TestPiece {
   public void Test_PickUpPieceWithPieceInHand() {
     // Create gamestate object
     GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.Start();
@@ -94,6 +125,7 @@ public class TestPiece {
   public void Test_PickUpBottomPiece() {
     // Create gamestate object
     GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.Start();

@@ -41,13 +41,14 @@ public class TestGameState {
   public void Test_GameStateInit() {
     GameState gs = new GameState();
     TurnState ts = gs.GetTurnState();
-
+    gs.ChangeState(GamePhase.MOVE);
     Assert.AreEqual(ts, new TurnState(false, false, false, PlayerEnum.Player1, GamePhase.ROLL));
   }
 
   [Test]
   public void Test_ChangePlayer() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     gs.ChangeCurrentPlayer();
     TurnState ts = gs.GetTurnState();
     Logger.Debug($"(GameState)Object: \n" + ToString());
@@ -58,6 +59,7 @@ public class TestGameState {
   [Test]
   public void Test_SetPieceInHand() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.MoveToBoardIndex(2);
     Assert.True(gs.SetPieceInHand(pc));
@@ -66,6 +68,7 @@ public class TestGameState {
   [Test]
   public void Test_SetPieceInHandWhenPieceInHand() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     Piece pc_1 = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     Piece pc_2 = new GameObject("Piece2", typeof(Piece)).GetComponent<Piece>();
 
@@ -76,6 +79,7 @@ public class TestGameState {
   [Test]
   public void Test_MovePiece() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.MoveToBoardIndex(3);
@@ -84,6 +88,7 @@ public class TestGameState {
 
   public void Test_MovePieceSameSpot() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
 
     pc.Owner = new Player(PlayerEnum.Player1);
@@ -94,6 +99,7 @@ public class TestGameState {
   [Test]
   public void Test_MovePieceToBoardIndexWithOpponentsPieces() {
     GameState gs = new GameState();
+    gs.ChangeState(GamePhase.MOVE);
     Piece pc_1 = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     Piece pc_2 = new GameObject("Piece2", typeof(Piece)).GetComponent<Piece>();
     Piece pc_3 = new GameObject("Piece3", typeof(Piece)).GetComponent<Piece>();
