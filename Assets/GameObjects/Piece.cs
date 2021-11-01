@@ -37,7 +37,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   }
 
   public void OnPointerDown(PointerEventData data) {
-    if (GameHandler.Game.PlayerTurn == Owner.GetPlayerNum()) {
+    if (GameHandler.Game.PlayerTurn == Owner.GetPlayerNum() && !_inHome) {
       // Make sure that its the top piece
       // Due to pieces not being inited yet assume if its not in the
       // list assume that its the top one
@@ -58,7 +58,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
       Logger.Debug($"Piece Picked Up: {ToString()}", "PIECE");
       PickUpOrDrop();
     } else {
-      Logger.Warn("Can't pick up piece you are not its owner");
+      Logger.Warn("Can't pick up piece you are not its owner or its in home");
     }
   }
 
@@ -70,11 +70,35 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   }
 
   public void SetColour() {
-    SpriteRenderer renderer;
-    if (TryGetComponent<SpriteRenderer>(out renderer)) {
-      renderer.color = Owner.GetPlayerColour();
+    Color pieceFlat, pieceFlatBorder, pieceOnSide, pieceOnSideBorder;
+    if (_inHome) {
+      pieceFlat = new Color(0, 0, 0, 0);
+      pieceFlatBorder = new Color(0, 0, 0, 0);
+      pieceOnSide = Owner.GetPlayerColour();
+      pieceOnSideBorder = Color.black;
+      transform.localScale = new Vector2(1f, 1f);
+
     } else {
-      Logger.Warn($"Unable to get rendered for piece color will not be updated: {ToString()}");
+      pieceOnSide = Owner.GetPlayerColour();
+      pieceOnSideBorder = new Color(0, 0, 0, 0);
+      pieceFlat = Owner.GetPlayerColour();
+      pieceFlatBorder = Color.black;
+      transform.localScale = new Vector2(0.55f, 0.55f);
+    }
+    foreach (Transform t in gameObject.transform) {
+      if (t.gameObject.name == "PieceFlat") {
+        t.gameObject.GetComponent<SpriteRenderer>().color = pieceFlat;
+      } else if (t.gameObject.name == "PieceFlatBorder") {
+        t.gameObject.GetComponent<SpriteRenderer>().color = pieceFlatBorder;
+      } else if (t.gameObject.name == "PieceOnSideAsset 1") {
+        foreach (Transform sideAsset in t.gameObject.transform) {
+          if (sideAsset.gameObject.name == "PieceOnSide") {
+            sideAsset.gameObject.GetComponent<SpriteRenderer>().color = pieceOnSide;
+          } else if (sideAsset.gameObject.name == "PieceOnSideBorder") {
+            sideAsset.gameObject.GetComponent<SpriteRenderer>().color = pieceOnSideBorder;
+          }
+        }
+      }
     }
   }
 
@@ -86,6 +110,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     // As piece Init is not fully done yet
     _boardIndex = 1;
     _isPickedUp = false;
+    SetColour();
   }
 
   public void Update() {
@@ -154,10 +179,11 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     _onBar = false;
     _boardIndex = -1;
     _inHome = true;
+    // Change to home sprite
+    SetColour();
     Logger.Info($"Piece move to home: {ToString()}");
-
-    // TODO add moving the piece asset to the correct home
   }
+
   /**
    * Moves the piece on board index. This will assume that checks have already been done,
    * All other flags will be set to false.

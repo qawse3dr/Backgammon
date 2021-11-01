@@ -30,7 +30,7 @@ public class Player {
     if (PlayerNum == PlayerEnum.Player1) {
       return Color.white;
     } else if (PlayerNum == PlayerEnum.Player2) {
-      return Color.black;
+      return Color.red;
     } else {
       return Color.green;
     }

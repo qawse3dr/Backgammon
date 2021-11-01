@@ -284,33 +284,65 @@ public class GameState {
   public bool MovePiece(Piece piece, int boardIndex) {
     Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
                 piece.ToString() + "\n");
+
     if (PossibleMoves(piece).Contains(boardIndex)) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
+
+      List<Piece>[] myBoard, otherBoard;
+      int myHomeIndex, otherHomeIndex;
+      List<Piece> myOffBoard;
+
       if (piece.Owner.GetPlayerNum() == PlayerEnum.Player1) {
-        if (_pieces.BlackBoard[boardIndex - 1].Count > 1) {
-          Logger.Info("Invalid Move to many opponent pieces");
-          return false;
-        } else if (_pieces.BlackBoard[boardIndex - 1].Count == 1) {
-          Logger.Info("Overtaking not implemented yet");
-        }
-        if (_pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
-          _pieces.WhiteBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
-        }
-        _pieces.WhiteBoard[boardIndex - 1].Add(piece);
+        myBoard = _pieces.WhiteBoard;
+        otherBoard = _pieces.BlackBoard;
+        myHomeIndex = 25;
+        otherHomeIndex = 26;
+        myOffBoard = _pieces.WhiteOff;
 
       } else {
-        // Deals with pieces on opponet's board blocking your Move();
-        if (_pieces.WhiteBoard[boardIndex - 1].Count > 1) {
-          Logger.Info("Invalid Move to many opponent pieces");
+        myBoard = _pieces.BlackBoard;
+        otherBoard = _pieces.WhiteBoard;
+        myHomeIndex = 26;
+        otherHomeIndex = 25;
+        myOffBoard = _pieces.BlackOff;
+      }
+
+      if (boardIndex == myHomeIndex) {  // White home
+        Logger.Info("Attempt to move Piece into home");
+        if (!_whiteHome) {
+          Logger.Warn("Can't move to home not all your pieces are in home");
           return false;
-        } else if (_pieces.WhiteBoard[boardIndex - 1].Count == 1) {
-          Logger.Info("Overtaking not implemented yet");
         }
-        if (_pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
-          _pieces.BlackBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
-        }
-        _pieces.BlackBoard[boardIndex - 1].Add(piece);
+      } else if (boardIndex == otherHomeIndex) {
+        Logger.Info("Not your home get out");
+        return false;
+      } else if (otherBoard[boardIndex - 1].Count > 1) {
+        Logger.Info("Invalid Move to many opponent pieces");
+        return false;
+      } else if (otherBoard[boardIndex - 1].Count == 1) {
+        Logger.Info("Overtaking not implemented yet");
+      }
+
+      if (myBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
+        myBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
+      }
+
+      if (boardIndex == myHomeIndex)
+        piece.MoveIntoHome();
+
+      // Adds piece into board in right location in state
+      switch (piece.GetPieceStatus().PieceLocation) {
+        case PieceStatus.PieceLocationEnum.OnBoard:
+          myBoard[boardIndex - 1].Add(piece);
+          break;
+        case PieceStatus.PieceLocationEnum.OnBar:
+          Logger.Info("NOT IMPLEMENTED: Piece on bar");
+          break;
+        case PieceStatus.PieceLocationEnum.inHome:
+          Logger.Info("Place piece in home");
+          myOffBoard.Add(piece);
+          break;
       }
 
       // Place The piece asset on the board
@@ -338,6 +370,28 @@ public class GameState {
 
         piece.transform.position = new Vector2(deltaX, deltaY);
         piece.MoveToBoardIndex(boardIndex);
+      } else if (boardIndex == 25) {  // white home
+        float deltaX = 0, deltaY = 0;
+        if (_pieces.WhiteOff.Count <= 7) {
+          deltaX = 6.394f;
+          deltaY = -(_pieces.WhiteOff.Count - 1) * (0.3f);
+        } else {
+          deltaX = -5.406f;
+          deltaY = -(_pieces.WhiteOff.Count - 8) * (0.3f);
+        }
+        deltaY += 1.398f;
+        piece.transform.position = new Vector2(deltaX, deltaY);
+      } else if (boardIndex == 26) {  // black home
+        float deltaX = 0, deltaY = 0;
+        if (_pieces.BlackOff.Count <= 7) {
+          deltaX = 6.394f;
+          deltaY = (_pieces.BlackOff.Count - 1) * (0.3f);
+        } else {
+          deltaX = -5.406f;
+          deltaY = (_pieces.BlackOff.Count - 8) * (0.3f);
+        }
+        deltaY += -3.976f;
+        piece.transform.position = new Vector2(deltaX, deltaY);
       }
 
       return true;
@@ -373,8 +427,8 @@ public class GameState {
   the rules of backgammon.
   */
   public List<int> PossibleMoves(Piece piece) {
-    List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12,
-                                      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
+    List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
+                                      14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
     string move = "\n" + string.Join(",", moves);
     Logger.Info(
         $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
@@ -415,6 +469,29 @@ public class GameState {
       Logger.Info("Piece already held", "PIECE");
       return false;
     } else {  // Success
+      if (this._gamePhase != GamePhase.MOVE) {
+        Logger.Warn("You are not in the Move phase Piece can't be moved");
+        return false;
+      } else if (piece.GetPieceStatus().PieceLocation ==
+                 PieceStatus.PieceLocationEnum
+                     .inHome) {  // Shouldn't be able to move pieces in home
+        Logger.Warn("Piece already in home can't be moved");
+        return false;
+      } else if (!(piece.GetPieceStatus().PieceLocation ==
+                   PieceStatus.PieceLocationEnum.OnBar)) {  // if its on the bar its an auto pass
+                                                            // (owner has already been checked)
+        if (this._playerTurn == PlayerEnum.Player1) {
+          if (this._whiteOnBar) {  // Can't move piece if there is one on the bar
+            Logger.Warn("White Player has a piece on the bar");
+            return false;
+          }
+        } else {
+          if (this._blackOnBar) {  // Can't move piece if there is one on the bar
+            Logger.Warn("Black Player has a piece on the bar");
+            return false;
+          }
+        }
+      }
       Logger.Info($"Picking up Piece: {piece.ToString()}");
       _pieces.PieceInHand = piece;
       return true;
@@ -448,4 +525,43 @@ public class GameState {
     }
     return players;
   }
+
+/** These functions will not be in the final release and shouldn't be
+ * used anywhere execpt the debuging menu and maybe unit tests
+ */
+#if DEBUG_MENU
+
+  public void ChangeState(GamePhase phase) {
+    Logger.Debug($"Change Game Phase from {_gamePhase} to {phase}");
+    _gamePhase = phase;
+  }
+
+  public void ChangeWhiteHome(bool isHome) {
+    Logger.Debug($"Change White Home from {_whiteHome} to {isHome}");
+    _whiteHome = isHome;
+  }
+
+  public void ChangeBlackHome(bool isHome) {
+    Logger.Debug($"Change Black Home from {_blackHome} to {isHome}");
+    _blackHome = isHome;
+  }
+
+  public void ChangeWhiteOnBar(bool onBar) {
+    Logger.Debug($"Change White On Bar from {_whiteHome} to {onBar}");
+    _whiteOnBar = onBar;
+  }
+
+  public void ChangeBlackOnBar(bool onBar) {
+    Logger.Debug($"Change Black On Bar from {_blackHome} to {onBar}");
+    _blackOnBar = onBar;
+  }
+
+  public void ChangeDieActive(int dieNum, bool isActive) {
+    Logger.Debug($"Set Die {dieNum} to {isActive}");
+  }
+
+  public void SetDieValue(int dieNum, int value) {
+    Logger.Debug($"");
+  }
+#endif
 }
