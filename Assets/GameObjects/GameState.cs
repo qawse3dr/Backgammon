@@ -367,10 +367,10 @@ public class GameState {
     BackgammonUIController controller = GameObject.FindObjectOfType<BackgammonUIController>();
 
     if (_pieces.WhiteOff.Count == 15) {
-      controller.GameOver(1);
+      controller.GameOver(_players[0]);
       igo = true;
     } else if (_pieces.BlackOff.Count == 15) {
-      controller.GameOver(2);
+      controller.GameOver(_players[1]);
       igo = true;
     }
 
