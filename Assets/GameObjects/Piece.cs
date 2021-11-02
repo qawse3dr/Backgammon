@@ -227,6 +227,9 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     _inHome = true;
     SetColour();
     Logger.Info($"Piece move to home: {ToString()}");
+    if(GameHandler.Game.IsGameOver()) {
+      Logger.Info($"Game is over Player {Owner.ToString()} won");
+    }
     return true;
   }
 
