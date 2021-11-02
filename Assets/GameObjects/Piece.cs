@@ -27,7 +27,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   private Vector2 _previousPostion;
   // The player who's Piece this is
   // TODO remove once owner is set
-  private Player _owner = new Player(PlayerEnum.Player1);
+  private Player _owner = null;
   public Player Owner {
     get { return _owner; }
     set {
@@ -35,6 +35,9 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
       SetColour();
     }
   }
+
+  // TODO remove once init is done
+  public PlayerEnum StartingOwner;
 
   public void OnPointerDown(PointerEventData data) {
     if (GameHandler.Game.PlayerTurn == Owner.GetPlayerNum() && !_inHome) {
@@ -110,10 +113,11 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     // As piece Init is not fully done yet
     _boardIndex = 1;
     _isPickedUp = false;
-    SetColour();
   }
 
   public void Update() {
+    if (Owner == null)
+      Owner = GameHandler.Game.GetPlayer(StartingOwner);
     if (_isPickedUp) {
       // There seems to be a bug where the mousePos.z can't be the same as the mouse or else
       // OnClicks Won't work. So a work around is to just set it to 3.
@@ -175,23 +179,126 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   }
 
   /* Movies Piece into home. assumes that all checks have already occurred. */
-  public void MoveIntoHome() {
+  public bool MoveIntoHome() {
+    BoardState boardState = GameHandler.Game.GetBoardState();
+    TurnState turnState = GameHandler.Game.GetTurnState();
+
+    ///////// error checking ////////////////////
+
+    // Player turn
+    if (Owner.GetPlayerNum() != turnState.PlayerTurn) {
+      Logger.Warn("Not your turn");
+      return false;
+    }
+
+    // inHome
+    if (!turnState.Home) {
+      Logger.Warn("Can't move to home not all your pieces are in home");
+      return false;
+    }
+
+    ////////// Worked update board /////////////////
+    if (boardState.MyBoard[_boardIndex - 1].Contains(this))
+      boardState.MyBoard[_boardIndex - 1].Remove(this);
+
+    boardState.MyHome.Add(this);
+
+    /////////// Update sprite pos //////////////
+    float deltaX = 0, deltaY = 0;
+
+    if (boardState.MyHome.Count < 8) {
+      deltaX = 6.394f;
+      deltaY = (boardState.MyHome.Count - 1) * (0.3f);
+    } else {
+      deltaX = -5.406f;
+      deltaY = (boardState.MyHome.Count - 8) * (0.3f);
+    }
+
+    if (Owner.PlayerNum == PlayerEnum.Player1) {
+      deltaY = 1.398f - deltaY;
+    } else {
+      deltaY += -3.976f;
+    }
+    transform.position = new Vector2(deltaX, deltaY);
+
+    //////////// Update Internals /////////////
     _onBar = false;
     _boardIndex = -1;
     _inHome = true;
-    // Change to home sprite
     SetColour();
     Logger.Info($"Piece move to home: {ToString()}");
+    return true;
   }
 
   /**
    * Moves the piece on board index. This will assume that checks have already been done,
    * All other flags will be set to false.
    */
-  public void MoveToBoardIndex(int boardIndex) {
+  public bool MoveToBoardIndex(int boardIndex) {
+    BoardState boardState = GameHandler.Game.GetBoardState();
+    TurnState turnState = GameHandler.Game.GetTurnState();
+
+    ///////// error checking ////////////////////
+
+    // Player turn
+    if (Owner.GetPlayerNum() != turnState.PlayerTurn) {
+      Logger.Warn("Not your turn");
+      return false;
+    }
+
+    if (boardState.OtherBoard[boardIndex - 1].Count > 1) {
+      Logger.Info("Invalid Move to many opponent pieces");
+      return false;
+    }
+
+    ////////// Worked update board /////////////////
+    if (_onBar) {
+      // TODO remove from onbar
+    } else if (boardState.MyBoard[_boardIndex - 1].Contains(this))
+      boardState.MyBoard[_boardIndex - 1].Remove(this);
+
+    boardState.MyBoard[boardIndex - 1].Add(this);
+
+    if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
+      Logger.Info("Overtaking not implemented yet");
+      Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
+      // TODO remove other piece from board state and implement MoveToBar
+      otherPiece.MoveToBar();
+    }
+
+    /////////// Update sprite pos //////////////
+    float deltaX = 0, deltaY = 0;
+
+    if (boardIndex <= 6) {
+      deltaX = 5.263f - ((boardIndex - 1) * 0.811925f);
+    } else if (boardIndex <= 12) {
+      deltaX = -0.49f - ((boardIndex - 7) * 0.811925f);
+    } else if (boardIndex <= 18) {
+      deltaX = -4.534999f + ((boardIndex - 13) * 0.811925f);
+    } else if (boardIndex <= 24) {
+      deltaX = 1.234f + ((boardIndex - 19) * 0.811925f);
+    }
+
+    deltaY = (boardState.MyBoard[boardIndex - 1].Count - 1) * 0.5460075f;
+    // Delta y (top board or bottom board)
+    if (boardIndex <= 12) {
+      deltaY = -3.87f + deltaY;
+    } else if (boardIndex <= 24) {
+      deltaY = 1.257f - deltaY;
+    }
+
+    transform.position = new Vector2(deltaX, deltaY);
+
+    //////////// Update Internals /////////////
+
+    MoveToBoardIndexNoCheck(boardIndex);
+    Logger.Info($"Piece moved: {ToString()}");
+    return true;
+  }
+
+  public void MoveToBoardIndexNoCheck(int boardIndex) {
     _boardIndex = boardIndex;
     _onBar = false;
-    Logger.Info($"Piece moved: {ToString()}");
   }
 
   public PieceStatus GetPieceStatus() {

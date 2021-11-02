@@ -13,6 +13,7 @@ public class MenuSystemController : MonoBehaviour {
   public void StartGameOnClick() {
     Logger.Info("Starting Game Scene...");
     SceneManager.LoadScene("Backgammon");
+    GameHandler.Game.InitBoardState();
   }
 
   public void QuitGameOnClick() {

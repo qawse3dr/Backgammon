@@ -6,6 +6,10 @@ using UnityEngine.TestTools;
 using Logger = LNAR.Logger;
 
 public class TestGameState {
+  [SetUp]
+  public void Setup() {
+    GameHandler.Game = new GameState();
+  }
   [Test]
   public void Test_GamePhaseToString1() {
     GamePhase gp = GamePhase.ROLL;
@@ -59,9 +63,11 @@ public class TestGameState {
   [Test]
   public void Test_SetPieceInHand() {
     GameState gs = new GameState();
+
     gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
-    pc.MoveToBoardIndex(2);
+    pc.Owner = new Player(PlayerEnum.Player1);
+
     Assert.True(gs.SetPieceInHand(pc));
   }
 
@@ -82,7 +88,7 @@ public class TestGameState {
     gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
-    pc.MoveToBoardIndex(3);
+    pc.MoveToBoardIndexNoCheck(3);
     Assert.True(gs.MovePiece(pc, 2));
   }
 
@@ -92,7 +98,7 @@ public class TestGameState {
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
 
     pc.Owner = new Player(PlayerEnum.Player1);
-    pc.MoveToBoardIndex(2);
+    pc.MoveToBoardIndexNoCheck(2);
     Assert.False(gs.MovePiece(pc, 2));
   }
 

@@ -29,6 +29,10 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
     } else {
       text.text = "Turn: Player 1";
     }
+    GameObject turnState = GameObject.Find("TurnState");
+    if (turnState.GetComponent<Text>().text == "State: Move") {
+      OnClickChangeTurnState(turnState);
+    }
     GameHandler.Game.ChangeCurrentPlayer();
   }
 

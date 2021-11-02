@@ -50,6 +50,22 @@ public struct TurnState {
   }
 };
 
+// holds information about the board state with reference to a Player turn
+public struct BoardState {
+  // Board info
+  public List<Piece>[] MyBoard;
+  public List<Piece>[] OtherBoard;
+
+  // Bar info
+  public List<Piece> MyBar;
+  public List<Piece> OtherBar;
+
+  // home info
+  public List<Piece> MyHome;
+  public int MyHomeIndex;
+  public int OtherHomeIndex;
+}
+
 /*
 Holds all the piece objects of the game, organized by their location.
     WhiteBoard - 2-dimensional array; first dimension represents the points on the board. Second
@@ -257,6 +273,8 @@ public class GameState {
                   _pieces.WhiteBoard[2].Count + _pieces.WhiteBoard[3].Count +
                   _pieces.WhiteBoard[4].Count + _pieces.WhiteBoard[5].Count;
         home = (numHome == 15) ? true : false;
+      } else {
+        home = _whiteHome;
       }
     } else {  // current player is black
       onbar = _pieces.BlackBar.Count == 0 ? false : true;
@@ -266,11 +284,36 @@ public class GameState {
                   _pieces.BlackBoard[2].Count + _pieces.BlackBoard[3].Count +
                   _pieces.BlackBoard[4].Count + _pieces.BlackBoard[5].Count;
         home = (numHome == 15) ? true : false;
+      } else {
+        home = _blackHome;
       }
     }
     TurnState ts = new TurnState(this.IsGameOver(), onbar, home, _playerTurn, _gamePhase);
     Logger.Debug("(GameState)TurnState Object: " + ts.ToString());
     return ts;
+  }
+
+  public BoardState GetBoardState() {
+    BoardState boardState = new BoardState();
+    if (PlayerTurn == PlayerEnum.Player1) {
+      boardState.MyBoard = _pieces.WhiteBoard;
+      boardState.OtherBoard = _pieces.BlackBoard;
+      boardState.MyHomeIndex = 25;
+      boardState.OtherHomeIndex = 26;
+      boardState.MyHome = _pieces.WhiteOff;
+      boardState.MyBar = _pieces.WhiteBar;
+      boardState.OtherBar = _pieces.BlackBar;
+
+    } else {
+      boardState.MyBoard = _pieces.BlackBoard;
+      boardState.OtherBoard = _pieces.WhiteBoard;
+      boardState.MyHomeIndex = 26;
+      boardState.OtherHomeIndex = 25;
+      boardState.MyHome = _pieces.BlackOff;
+      boardState.MyBar = _pieces.BlackBar;
+      boardState.OtherBar = _pieces.WhiteBar;
+    }
+    return boardState;
   }
 
   /*
@@ -289,112 +332,15 @@ public class GameState {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
 
-      List<Piece>[] myBoard, otherBoard;
-      int myHomeIndex, otherHomeIndex;
-      List<Piece> myOffBoard;
-
-      if (piece.Owner.GetPlayerNum() == PlayerEnum.Player1) {
-        myBoard = _pieces.WhiteBoard;
-        otherBoard = _pieces.BlackBoard;
-        myHomeIndex = 25;
-        otherHomeIndex = 26;
-        myOffBoard = _pieces.WhiteOff;
-
-      } else {
-        myBoard = _pieces.BlackBoard;
-        otherBoard = _pieces.WhiteBoard;
-        myHomeIndex = 26;
-        otherHomeIndex = 25;
-        myOffBoard = _pieces.BlackOff;
-      }
-
-      if (boardIndex == myHomeIndex) {  // White home
-        Logger.Info("Attempt to move Piece into home");
-        if (!_whiteHome) {
-          Logger.Warn("Can't move to home not all your pieces are in home");
+      if (boardIndex == 25 || boardIndex == 26) {  // move to home
+        if (boardIndex != GetBoardState().MyHomeIndex) {
+          Logger.Info("Not your home get out");
           return false;
         }
-      } else if (boardIndex == otherHomeIndex) {
-        Logger.Info("Not your home get out");
-        return false;
-      } else if (otherBoard[boardIndex - 1].Count > 1) {
-        Logger.Info("Invalid Move to many opponent pieces");
-        return false;
-      } else if (otherBoard[boardIndex - 1].Count == 1) {
-        Logger.Info("Overtaking not implemented yet");
+        return piece.MoveIntoHome();
+      } else {  // move to board
+        return piece.MoveToBoardIndex(boardIndex);
       }
-
-      if (myBoard[piece.GetPieceStatus().BoardIndex - 1].Contains(piece)) {
-        myBoard[piece.GetPieceStatus().BoardIndex - 1].Remove(piece);
-      }
-
-      if (boardIndex == myHomeIndex)
-        piece.MoveIntoHome();
-
-      // Adds piece into board in right location in state
-      switch (piece.GetPieceStatus().PieceLocation) {
-        case PieceStatus.PieceLocationEnum.OnBoard:
-          myBoard[boardIndex - 1].Add(piece);
-          break;
-        case PieceStatus.PieceLocationEnum.OnBar:
-          Logger.Info("NOT IMPLEMENTED: Piece on bar");
-          break;
-        case PieceStatus.PieceLocationEnum.inHome:
-          Logger.Info("Place piece in home");
-          myOffBoard.Add(piece);
-          break;
-      }
-
-      // Place The piece asset on the board
-      if (boardIndex <= 24) {
-        float deltaX = 0, deltaY = 0;
-        if (boardIndex <= 6) {
-          deltaX = 5.263f - ((boardIndex - 1) * 0.811925f);
-        } else if (boardIndex <= 12) {
-          deltaX = -0.49f - ((boardIndex - 7) * 0.811925f);
-        } else if (boardIndex <= 18) {
-          deltaX = -4.534999f + ((boardIndex - 13) * 0.811925f);
-        } else if (boardIndex <= 24) {
-          deltaX = 1.234f + ((boardIndex - 19) * 0.811925f);
-        }
-
-        deltaY = (_pieces.WhiteBoard[boardIndex - 1].Count +
-                  _pieces.BlackBoard[boardIndex - 1].Count - 1) *
-                 0.5460075f;
-        // Delta y (top board or bottom board)
-        if (boardIndex <= 12) {
-          deltaY = -3.87f + deltaY;
-        } else if (boardIndex <= 24) {
-          deltaY = 1.257f - deltaY;
-        }
-
-        piece.transform.position = new Vector2(deltaX, deltaY);
-        piece.MoveToBoardIndex(boardIndex);
-      } else if (boardIndex == 25) {  // white home
-        float deltaX = 0, deltaY = 0;
-        if (_pieces.WhiteOff.Count <= 7) {
-          deltaX = 6.394f;
-          deltaY = -(_pieces.WhiteOff.Count - 1) * (0.3f);
-        } else {
-          deltaX = -5.406f;
-          deltaY = -(_pieces.WhiteOff.Count - 8) * (0.3f);
-        }
-        deltaY += 1.398f;
-        piece.transform.position = new Vector2(deltaX, deltaY);
-      } else if (boardIndex == 26) {  // black home
-        float deltaX = 0, deltaY = 0;
-        if (_pieces.BlackOff.Count <= 7) {
-          deltaX = 6.394f;
-          deltaY = (_pieces.BlackOff.Count - 1) * (0.3f);
-        } else {
-          deltaX = -5.406f;
-          deltaY = (_pieces.BlackOff.Count - 8) * (0.3f);
-        }
-        deltaY += -3.976f;
-        piece.transform.position = new Vector2(deltaX, deltaY);
-      }
-
-      return true;
     } else {
       Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
       return false;
@@ -513,6 +459,14 @@ public class GameState {
            $"GamePhase: {_gamePhase})";
   }
 
+  // TODO REMOVE once piece init is complete
+  public Player GetPlayer(PlayerEnum playerNum) {
+    if (playerNum == PlayerEnum.Player1) {
+      return _players[0];
+    } else {
+      return _players[1];
+    }
+  }
   /*
   Helper method for ToString method. Creates a string to describe the _players attribute of the
   GameState instance.

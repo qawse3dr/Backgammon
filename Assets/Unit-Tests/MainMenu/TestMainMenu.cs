@@ -13,6 +13,7 @@ public class TestMainMenu {
   [UnitySetUp]
   public IEnumerator Setup() {
     SceneManager.LoadScene("MainMenu");
+    GameHandler.Game = new GameState();
     yield return new WaitForSeconds(1);
 
     _menuController = new GameObject("MenuSystemController", typeof(MenuSystemController))
