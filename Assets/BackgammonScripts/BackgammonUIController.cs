@@ -47,11 +47,10 @@ public class BackgammonUIController : MonoBehaviour {
     panelBorder.enabled = true;
   }
 
-  public void GameOver(int winPlayer){
-
-    if(winPlayer == 1){
+  public void GameOver(int winPlayer) {
+    if (winPlayer == 1) {
       winner.text = "Player 1 won";
-    } else if(winPlayer == 2){
+    } else if (winPlayer == 2) {
       winner.text = "Player 2 won";
     }
     image.enabled = true;
