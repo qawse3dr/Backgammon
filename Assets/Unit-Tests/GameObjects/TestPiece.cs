@@ -16,7 +16,7 @@ public class TestPiece {
   public void SetUp() {
     Logger.Debug("test");
     _player = new Player(PlayerEnum.Player1);
-
+    GameHandler.Game = new GameState();
     _pieceGameObject = CreateMockPieceObject();
     _piece = _pieceGameObject.GetComponent<Piece>();
     _piece.Owner = _player;
@@ -70,6 +70,9 @@ public class TestPiece {
   // Tests moving a piece to home
   [Test]
   public void Test_MoveToHome() {
+    GameHandler.Game.ChangeWhiteHome(true);
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
+
     _piece.MoveIntoHome();
     Assert.AreEqual(_piece.GetPieceStatus().PieceLocation, PieceStatus.PieceLocationEnum.inHome);
   }
@@ -77,9 +80,9 @@ public class TestPiece {
   // Tests moving a piece to home
   [Test]
   public void Test_MoveToBoardIndex() {
-    _piece.MoveToBoardIndex(0);
+    _piece.MoveToBoardIndex(1);
     Assert.AreEqual(_piece.GetPieceStatus().PieceLocation, PieceStatus.PieceLocationEnum.OnBoard);
-    Assert.AreEqual(_piece.GetPieceStatus().BoardIndex, 0);
+    Assert.AreEqual(_piece.GetPieceStatus().BoardIndex, 1);
 
     _piece.MoveToBoardIndex(10);
     Assert.AreEqual(_piece.GetPieceStatus().PieceLocation, PieceStatus.PieceLocationEnum.OnBoard);
