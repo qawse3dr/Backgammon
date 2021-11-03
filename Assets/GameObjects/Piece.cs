@@ -50,9 +50,14 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
       } else {
         piecesList = GameHandler.Game.Pieces.BlackBoard;
       }
-
       // Checks thats its on the top.
-      if (piecesList[_boardIndex - 1].Contains(this)) {
+      if (_onBar) {
+        BoardState boardState = GameHandler.Game.GetBoardState();
+        if (boardState.OtherBar.IndexOf(this) != boardState.OtherBar.Count - 1) {
+          Logger.Warn("Please select the top pieces");
+          return;
+        }
+      } else if (piecesList[_boardIndex - 1].Contains(this)) {
         if (piecesList[_boardIndex - 1].IndexOf(this) != piecesList[_boardIndex - 1].Count - 1) {
           Logger.Warn("Please select the top pieces");
           return;
@@ -173,9 +178,20 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
    * Moves piece to bar, setting all other flags to false or -1 for _boardIndex
    */
   public void MoveToBar() {
+    BoardState boardState = GameHandler.Game.GetBoardState();
+    float deltaX = 0.530822f, deltaY = 0f;
     _onBar = true;
     _boardIndex = -1;
     Logger.Info($"Piece move to bar: {ToString()}");
+    boardState.MyBar.Add(this);
+
+    if (Owner.PlayerNum == PlayerEnum.Player1) {
+      deltaY = 1.287123f - (0.55f) * (boardState.MyBar.Count - 1);
+
+    } else if (Owner.PlayerNum == PlayerEnum.Player2) {
+      deltaY = -3.885724f + (0.55f) * (boardState.MyBar.Count - 1);
+    }
+    transform.position = new Vector2(deltaX, deltaY);
   }
 
   /* Movies Piece into home. assumes that all checks have already occurred. */
@@ -256,7 +272,8 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
     ////////// Worked update board /////////////////
     if (_onBar) {
-      // TODO remove from onbar
+      boardState.OtherBar.Remove(this);
+
     } else if (boardState.MyBoard[_boardIndex - 1].Contains(this))
       boardState.MyBoard[_boardIndex - 1].Remove(this);
 
@@ -265,7 +282,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
       Logger.Info("Overtaking not implemented yet");
       Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
-      // TODO remove other piece from board state and implement MoveToBar
+      boardState.OtherBoard[boardIndex - 1].Remove(otherPiece);
       otherPiece.MoveToBar();
     }
 
