@@ -187,11 +187,9 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
     if (Owner.PlayerNum == PlayerEnum.Player1) {
       deltaY = 1.287123f - (0.55f) * (boardState.MyBar.Count - 1);
-      GameHandler.Game.ChangeWhiteOnBar(true);
 
     } else if (Owner.PlayerNum == PlayerEnum.Player2) {
       deltaY = -3.885724f + (0.55f) * (boardState.MyBar.Count - 1);
-      GameHandler.Game.ChangeBlackOnBar(true);
     }
     transform.position = new Vector2(deltaX, deltaY);
   }
