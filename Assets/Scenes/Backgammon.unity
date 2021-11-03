@@ -3698,6 +3698,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerIcon1
       objectReference: {fileID: 0}
+    - target: {fileID: 4040816210035969879, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
+      propertyPath: m_Color.g
+      value: 0.7358
+      objectReference: {fileID: 0}
+    - target: {fileID: 4040816210035969879, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6439798693255212240, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
       propertyPath: m_RootOrder
       value: 7
