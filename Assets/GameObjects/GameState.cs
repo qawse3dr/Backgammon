@@ -328,6 +328,13 @@ public class GameState {
     Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
                 piece.ToString() + "\n");
 
+    if (_gamePhase == GamePhase.ROLL) {
+      Logger.Warn("It's Roll phase you cant move pieces");
+      return false;
+    } else if (GetTurnState().GameOver) {
+      Logger.Warn("Game is over you can't move pieces");
+      return false;
+    }
     if (PossibleMoves(piece).Contains(boardIndex)) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");

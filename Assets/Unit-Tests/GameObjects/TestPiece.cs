@@ -146,4 +146,69 @@ public class TestPiece {
     pc_2.OnPointerDown(null);
     Assert.AreEqual(pc_2, GameHandler.Game.Pieces.PieceInHand);
   }
+
+  [Test]
+  public void Test_MoveToHomeYourTurnAndMovePhase() {
+    GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeWhiteHome(true);
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
+
+    Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    pc.Owner = new Player(PlayerEnum.Player1);
+    pc.Start();
+
+    Assert.True(GameHandler.Game.MovePiece(pc, 25));
+  }
+
+  [Test]
+  public void Test_MoveToHomeYourTurnAndRollPhase() {
+    GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeWhiteHome(true);
+    GameHandler.Game.ChangeState(GamePhase.ROLL);
+
+    Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    pc.Owner = new Player(PlayerEnum.Player1);
+    pc.Start();
+
+    Assert.False(GameHandler.Game.MovePiece(pc, 25));
+  }
+
+  [Test]
+  public void Test_MoveToHomeHomeFalse() {
+    GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeWhiteHome(false);
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
+
+    Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    pc.Owner = new Player(PlayerEnum.Player1);
+    pc.Start();
+
+    Assert.False(GameHandler.Game.MovePiece(pc, 25));
+  }
+
+  [Test]
+  public void Test_MoveToHomeNotYourTurn() {
+    GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeWhiteHome(true);
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
+    GameHandler.Game.ChangeCurrentPlayer();
+    Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    pc.Owner = new Player(PlayerEnum.Player1);
+    pc.Start();
+
+    Assert.False(GameHandler.Game.MovePiece(pc, 25));
+  }
+
+  [Test]
+  public void Test_MoveToHomeNotYourHome() {
+    GameHandler.Game = new GameState();
+    GameHandler.Game.ChangeWhiteHome(true);
+    GameHandler.Game.ChangeState(GamePhase.MOVE);
+
+    Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    pc.Owner = new Player(PlayerEnum.Player1);
+    pc.Start();
+
+    Assert.False(GameHandler.Game.MovePiece(pc, 26));
+  }
 }
