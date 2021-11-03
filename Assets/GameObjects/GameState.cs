@@ -364,6 +364,16 @@ public class GameState {
   */
   public bool IsGameOver() {
     bool igo = false;
+    BackgammonUIController controller = GameObject.FindObjectOfType<BackgammonUIController>();
+
+    if (_pieces.WhiteOff.Count == 15) {
+      controller.GameOver(_players[0]);
+      igo = true;
+    } else if (_pieces.BlackOff.Count == 15) {
+      controller.GameOver(_players[1]);
+      igo = true;
+    }
+
     Logger.Info($"(GameState)IsGameOver: It is {igo} that the game is over.");
     return igo;  // default value allows game to be played infinitely
   }

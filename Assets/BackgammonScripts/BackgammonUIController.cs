@@ -46,4 +46,18 @@ public class BackgammonUIController : MonoBehaviour {
     buttonBorder.enabled = true;
     panelBorder.enabled = true;
   }
+
+  public void GameOver(Player player) {
+    if (player.PlayerNum == PlayerEnum.Player1) {
+      winner.text = "Player 1 won";
+    } else if (player.PlayerNum == PlayerEnum.Player2) {
+      winner.text = "Player 2 won";
+    }
+    image.enabled = true;
+    text.enabled = true;
+    mainMenu.enabled = true;
+    winner.enabled = true;
+    buttonBorder.enabled = true;
+    panelBorder.enabled = true;
+  }
 }
