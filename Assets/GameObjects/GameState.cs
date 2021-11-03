@@ -182,6 +182,10 @@ public class GameState {
   public PlayerEnum PlayerTurn => _playerTurn;
   private GamePhase _gamePhase;
 
+#if DEBUG_MENU
+  public bool AllowAnyMove = false;
+#endif
+
   /*
   Constructor with no arguments.
   Simply calls InitBoardState. Functionality not implemented directly in constructor to allow for
@@ -328,7 +332,7 @@ public class GameState {
   public bool MovePiece(Piece piece, int boardIndex) {
     Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
                 piece.ToString() + "\n");
-
+    bool result = false;
     if (_gamePhase == GamePhase.ROLL) {
       Logger.Warn("It's Roll phase you cant move pieces");
       return false;
@@ -345,14 +349,18 @@ public class GameState {
           Logger.Info("Not your home get out");
           return false;
         }
-        return piece.MoveIntoHome();
+        result = piece.MoveIntoHome();
       } else {  // move to board
-        return piece.MoveToBoardIndex(boardIndex);
+        result = piece.MoveToBoardIndex(boardIndex);
       }
     } else {
       Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
       return false;
     }
+
+    // Update Game state
+    UpdateGameState();
+    return result;
   }
 
   /*
@@ -396,7 +404,43 @@ public class GameState {
     string move = "\n" + string.Join(",", moves);
     Logger.Info(
         $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
+// for unit testing allow any moves
+#if DEBUG_MENU
+    if (AllowAnyMove) {
+      moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
+                              14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+    }
+#endif
     return moves;  // default value for now
+  }
+
+  public void UpdateGameState() {
+    Logger.Info(
+        $"Updating game state before (_blackHome={_blackHome}, _whiteHome={_whiteHome}, _whiteOnBar={_whiteOnBar}, _blackOnBar={_blackOnBar}, _GamePhase={_gamePhase}, _playerTurn={_playerTurn})");
+    // Check if the player is all in home
+    _blackHome = GetIsHome(_pieces.BlackBoard);
+    _whiteHome = GetIsHome(_pieces.WhiteBoard);
+
+    _blackOnBar = (_pieces.BlackBar.Count > 0);
+    _whiteOnBar = (_pieces.WhiteBar.Count > 0);
+
+    Logger.Info(
+        $"Updating game state after (_blackHome={_blackHome}, _whiteHome={_whiteHome}, _whiteOnBar={_whiteOnBar}, _blackOnBar={_blackOnBar}, _GamePhase={_gamePhase}, _playerTurn={_playerTurn})");
+  }
+
+  private bool GetIsHome(List<Piece>[] board) {
+    foreach (List<Piece> pieceList in board) {
+      foreach (Piece piece in pieceList) {
+        if (piece.Owner.PlayerNum == PlayerEnum.Player1) {
+          if (piece.GetPieceStatus().BoardIndex < 19)
+            return false;
+        } else {
+          if (piece.GetPieceStatus().BoardIndex > 6)
+            return false;
+        }
+      }
+    }
+    return true;
   }
 
   /*
@@ -441,10 +485,6 @@ public class GameState {
       playerIcon1.transform.Find("Background").GetComponent<SpriteRenderer>().color = Color.black;
       playerName1.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Normal;
     }
-
-    // foreach (Transform t in gameObject.transform) {
-    //   if (t.gameObject.name == "PieceFlat") {
-    //     t.gameObject.GetComponent<SpriteRenderer>().color = pieceFlat;
   }
 
   /**
@@ -562,6 +602,27 @@ public class GameState {
 
   public void SetDieValue(int dieNum, int value) {
     Logger.Debug($"");
+  }
+
+  // Gets for debug menu this is not using properties because this will not be present in release
+  // build
+  public PlayerEnum GetPlayerTurn() {
+    return _playerTurn;
+  }
+  public GamePhase GetTurnPhase() {
+    return _gamePhase;
+  }
+  public bool GetWhiteHome() {
+    return _whiteHome;
+  }
+  public bool GetBlackHome() {
+    return _blackHome;
+  }
+  public bool GetWhiteOnBar() {
+    return _whiteOnBar;
+  }
+  public bool GetBlackOnBar() {
+    return _blackOnBar;
   }
 #endif
 }
