@@ -271,7 +271,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
     ////////// Worked update board /////////////////
     if (_onBar) {
-      // TODO remove from onbar
       boardState.OtherBar.Remove(this);
 
     } else if (boardState.MyBoard[_boardIndex - 1].Contains(this))
@@ -282,7 +281,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
       Logger.Info("Overtaking not implemented yet");
       Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
-      // TODO remove other piece from board state and implement MoveToBar
       boardState.OtherBoard[boardIndex - 1].Remove(otherPiece);
       otherPiece.MoveToBar();
     }
