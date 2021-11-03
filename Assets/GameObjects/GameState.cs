@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine.UI;
 using UnityEngine;
 using Logger = LNAR.Logger;
 /*
@@ -26,44 +27,48 @@ Holds all the information needed to fully describe the state of the given "turn"
                 time.
     GamePhase - roll phase vs move phase of turn for current player (specified by PlayerTurn)
 */
-public struct TurnState {
-  public bool GameOver;
-  public bool OnBar;
-  public bool Home;
-  public PlayerEnum PlayerTurn;
-  public GamePhase GamePhase;
-  public TurnState(bool GameOver, bool OnBar, bool Home, PlayerEnum PlayerTurn,
-                   GamePhase GamePhase) {
-    this.GameOver = GameOver;
-    this.OnBar = OnBar;
-    this.Home = Home;
-    this.PlayerTurn = PlayerTurn;
-    this.GamePhase = GamePhase;
-  }
-  public string ToString(string indentOut = "") {
-    string indentIn = indentOut + "\t";
-    string ts = "\n" + indentIn + $"(GameOver: {GameOver}" + "\n" + indentIn + $"OnBar: {OnBar}" +
-                "\n" + indentIn + $"Home: {Home}" + "\n" + indentIn +
-                "PlayerTurn: " + PlayerTurn.ToString() + "\n" + indentIn +
-                "GamePhase: " + GamePhase.ToString() + ")";
-    return ts;
-  }
+public struct TurnState
+{
+    public bool GameOver;
+    public bool OnBar;
+    public bool Home;
+    public PlayerEnum PlayerTurn;
+    public GamePhase GamePhase;
+    public TurnState(bool GameOver, bool OnBar, bool Home, PlayerEnum PlayerTurn,
+                     GamePhase GamePhase)
+    {
+        this.GameOver = GameOver;
+        this.OnBar = OnBar;
+        this.Home = Home;
+        this.PlayerTurn = PlayerTurn;
+        this.GamePhase = GamePhase;
+    }
+    public string ToString(string indentOut = "")
+    {
+        string indentIn = indentOut + "\t";
+        string ts = "\n" + indentIn + $"(GameOver: {GameOver}" + "\n" + indentIn + $"OnBar: {OnBar}" +
+                    "\n" + indentIn + $"Home: {Home}" + "\n" + indentIn +
+                    "PlayerTurn: " + PlayerTurn.ToString() + "\n" + indentIn +
+                    "GamePhase: " + GamePhase.ToString() + ")";
+        return ts;
+    }
 };
 
 // holds information about the board state with reference to a Player turn
-public struct BoardState {
-  // Board info
-  public List<Piece>[] MyBoard;
-  public List<Piece>[] OtherBoard;
+public struct BoardState
+{
+    // Board info
+    public List<Piece>[] MyBoard;
+    public List<Piece>[] OtherBoard;
 
-  // Bar info
-  public List<Piece> MyBar;
-  public List<Piece> OtherBar;
+    // Bar info
+    public List<Piece> MyBar;
+    public List<Piece> OtherBar;
 
-  // home info
-  public List<Piece> MyHome;
-  public int MyHomeIndex;
-  public int OtherHomeIndex;
+    // home info
+    public List<Piece> MyHome;
+    public int MyHomeIndex;
+    public int OtherHomeIndex;
 }
 
 /*
@@ -82,56 +87,63 @@ Holds all the piece objects of the game, organized by their location.
     BlackOff   - array of piece objects to hold all black pieces that have been "beared off" i.e.
                  those that are not located on the board or the bar and are out of play.
 */
-public struct PieceState {
-  public List<Piece>[] BlackBoard;
-  public List<Piece>[] WhiteBoard;
-  public List<Piece> WhiteBar;
-  public List<Piece> BlackBar;
-  public List<Piece> WhiteOff;
-  public List<Piece> BlackOff;
+public struct PieceState
+{
+    public List<Piece>[] BlackBoard;
+    public List<Piece>[] WhiteBoard;
+    public List<Piece> WhiteBar;
+    public List<Piece> BlackBar;
+    public List<Piece> WhiteOff;
+    public List<Piece> BlackOff;
 
-  // A reference to the current Piece in hand
-  // If this is set to null it means no piece is
-  // being held, and a piece can only be picked up
-  // if this is set to null.
-  public Piece PieceInHand;
-  public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar,
-                    List<Piece> BlackBar, List<Piece> WhiteOff, List<Piece> BlackOff) {
-    this.BlackBoard = BlackBoard;
-    this.WhiteBoard = WhiteBoard;
-    this.WhiteBar = WhiteBar;
-    this.BlackBar = BlackBar;
-    this.WhiteOff = WhiteOff;
-    this.BlackOff = BlackOff;
-    this.PieceInHand = null;
-  }
-  public string ToString(string indentOut = "") {
-    string indentIn = indentOut + "\t";
-    string psString = "\n" + indentIn + "BlackBoard:\n" +
-                      BoardPiecesToString(BlackBoard, indentIn) + indentIn + "WhiteBoard:\n" +
-                      BoardPiecesToString(WhiteBoard, indentIn) + indentIn + "WhiteBar:\n" +
-                      PiecesToString(WhiteBar, indentIn) + indentIn + "BlackBar:\n" +
-                      PiecesToString(BlackBar, indentIn) + indentIn + "WhiteOff:\n" +
-                      PiecesToString(WhiteOff, indentIn) + indentIn + "BlackOff:\n" +
-                      PiecesToString(BlackOff, indentIn);
-    return psString;
-  }
-  private string BoardPiecesToString(List<Piece>[] ps, string indentOut = "") {
-    string indentIn = indentOut + "\t";
-    string bp = "";
-    for (int i = 1; i <= ps.Length; i++) {
-      bp += indentIn + $"Point #{i}:\n" + PiecesToString(ps[i - 1], indentIn);
+    // A reference to the current Piece in hand
+    // If this is set to null it means no piece is
+    // being held, and a piece can only be picked up
+    // if this is set to null.
+    public Piece PieceInHand;
+    public PieceState(List<Piece>[] BlackBoard, List<Piece>[] WhiteBoard, List<Piece> WhiteBar,
+                      List<Piece> BlackBar, List<Piece> WhiteOff, List<Piece> BlackOff)
+    {
+        this.BlackBoard = BlackBoard;
+        this.WhiteBoard = WhiteBoard;
+        this.WhiteBar = WhiteBar;
+        this.BlackBar = BlackBar;
+        this.WhiteOff = WhiteOff;
+        this.BlackOff = BlackOff;
+        this.PieceInHand = null;
     }
-    return bp;
-  }
-  private string PiecesToString(List<Piece> ps, string indentOut = "") {
-    string pieces = "";
-    string indentIn = indentOut + "\t";
-    for (int i = 1; i <= ps.Count; i++) {
-      pieces += indentIn + ps[i].ToString() + "\n";
+    public string ToString(string indentOut = "")
+    {
+        string indentIn = indentOut + "\t";
+        string psString = "\n" + indentIn + "BlackBoard:\n" +
+                          BoardPiecesToString(BlackBoard, indentIn) + indentIn + "WhiteBoard:\n" +
+                          BoardPiecesToString(WhiteBoard, indentIn) + indentIn + "WhiteBar:\n" +
+                          PiecesToString(WhiteBar, indentIn) + indentIn + "BlackBar:\n" +
+                          PiecesToString(BlackBar, indentIn) + indentIn + "WhiteOff:\n" +
+                          PiecesToString(WhiteOff, indentIn) + indentIn + "BlackOff:\n" +
+                          PiecesToString(BlackOff, indentIn);
+        return psString;
     }
-    return pieces;
-  }
+    private string BoardPiecesToString(List<Piece>[] ps, string indentOut = "")
+    {
+        string indentIn = indentOut + "\t";
+        string bp = "";
+        for (int i = 1; i <= ps.Length; i++)
+        {
+            bp += indentIn + $"Point #{i}:\n" + PiecesToString(ps[i - 1], indentIn);
+        }
+        return bp;
+    }
+    private string PiecesToString(List<Piece> ps, string indentOut = "")
+    {
+        string pieces = "";
+        string indentIn = indentOut + "\t";
+        for (int i = 1; i <= ps.Count; i++)
+        {
+            pieces += indentIn + ps[i].ToString() + "\n";
+        }
+        return pieces;
+    }
 }
 
 /* The GameState epic encompasses everything related to the flow of the game in the backend and
@@ -163,199 +175,230 @@ public struct PieceState {
   _gamePhase   - GamePhase type enum that differentiates between the "roll phase" or "move phase" of
                  a given players' turn.
 */
-public class GameState {
-  private bool _blackOnBar;
-  private bool _whiteOnBar;
-  private bool _blackHome;
-  private bool _whiteHome;
-  private PieceState _pieces;
-  private Die _die;
-  public PieceState Pieces {
-    get => _pieces;
-  private
-    set { _pieces = value; }
-  }
-  private List<int> _roll;
-  private Player[] _players;
-  private PlayerEnum _playerTurn;
-  public PlayerEnum PlayerTurn => _playerTurn;
-  private GamePhase _gamePhase;
-
-  /*
-  Constructor with no arguments.
-  Simply calls InitBoardState. Functionality not implemented directly in constructor to allow for
-  the board to be initialized multiple times or a given game i.e. if a game is restarted.
-  */
-  public GameState() {
-    Logger.Debug("(GameState)Constructor called");
-    InitBoardState();
-  }
-
-  /*
-  Called by class constructor or through outside calls when game is started. Sets/resets all the
-  variables of the class including _pieces which creates piece objects for all 30 pieces and
-  organizes them into their correct location groupings withint the PieceState struct.
-  */
-  public void InitBoardState() {
-    Logger.Debug($"(GameState)InitBoardState: game and board initialized");
-    // no pieces start off on the bar
-    _blackOnBar = false;
-    _whiteOnBar = false;
-    // initial layout of board has 5 white pieces in white home and 5 black pieces in black home
-    _blackHome = false;
-    _whiteHome = false;
-    // initialize PieceState struct
-    _pieces = InitPieceState();
-    // no roll has been done yet so roll should be empty array
-    _die = new Die(2, new List<int> { 1, 2 });
-    // get players playing the game currently
-    _players = InitPlayers();
-    // assign one of these players (whichever is Player #1) to start the game
-    _playerTurn = InitPlayerTurn();
-    // init GamePhase to ROLL since ROLL comes before MOVE
-    _gamePhase = GamePhase.ROLL;
-    Logger.Debug($"(GameState)Object: \n" + ToString());
-  }
-
-  /*
-  Helper method for InitBoardState. Initializes all piece objects and organizes them into the
-  location groupings of the PieceState struct.
-  */
-  private PieceState InitPieceState() {
-    Logger.Debug($"(GameState)InitPieceState: pieces initialized");
-    List<Piece>[] bb = new List<Piece>[24];
-    List<Piece>[] wb = new List<Piece>[24];
-    for (int i = 0; i < wb.Length; i++) {
-      bb[i] = new List<Piece>();
-      wb[i] = new List<Piece>();
+public class GameState
+{
+    private bool _blackOnBar;
+    private bool _whiteOnBar;
+    private bool _blackHome;
+    private bool _whiteHome;
+    private PieceState _pieces;
+    private Die _die;
+    public PieceState Pieces
+    {
+        get => _pieces;
+        private
+          set { _pieces = value; }
     }
-    PieceState ps = new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(),
-                                   new List<Piece>());
-    return ps;
-  }
+    private List<int> _roll;
+    private Player[] _players;
+    private PlayerEnum _playerTurn;
+    public PlayerEnum PlayerTurn => _playerTurn;
+    private GamePhase _gamePhase;
 
-  /*
-  Helper method for InitBoardState. Initializes _players attribute, the 2 players of the game to
-  their respective player objects and sets one to be "Player #1" and another to be "Player #2". Also
-  initializes _playersTurn to the Player object of these 2 that is labeled "Player #1".
-  */
-  private Player[] InitPlayers() {
-    Logger.Debug($"(GameState)InitPlayers: players initialized");
-    Player[] p = new Player[2];
-    p[0] = new Player(PlayerEnum.Player1);
-    p[1] = new Player(PlayerEnum.Player2);
-    return p;
-  }
-
-  /*
-  Helper method for InitBoardState. Initializes _playerTurn attribute
-  */
-  private PlayerEnum InitPlayerTurn() {
-    Logger.Info($"(GameState)InitPlayerTurn: current player initialized");
-    return _players[0].GetPlayerNum();
-  }
-
-  /*
-  Returns a TurnState struct holding information on current state of game
-  Recall, player1 = white, player2 = black
-  */
-  public TurnState GetTurnState() {
-    Logger.Debug(
-        "(GameState)GetTurnState: Creating TurnState struct to describe GameState instance");
-    bool onbar = false;
-    int numHome;
-    bool home = false;
-    if (_playerTurn == PlayerEnum.Player1) {  // current player is white
-      onbar = _pieces.WhiteBar.Count == 0 ? false : true;
-      if (_whiteHome !=
-          true) {  // will not change from true once the player has gotten all pieces into home
-        numHome = _pieces.WhiteBoard[0].Count + _pieces.WhiteBoard[1].Count +
-                  _pieces.WhiteBoard[2].Count + _pieces.WhiteBoard[3].Count +
-                  _pieces.WhiteBoard[4].Count + _pieces.WhiteBoard[5].Count;
-        home = (numHome == 15) ? true : false;
-      } else {
-        home = _whiteHome;
-      }
-    } else {  // current player is black
-      onbar = _pieces.BlackBar.Count == 0 ? false : true;
-      if (_blackHome !=
-          true) {  // will not change from true once the player has gotten all pieces into home
-        numHome = _pieces.BlackBoard[0].Count + _pieces.BlackBoard[1].Count +
-                  _pieces.BlackBoard[2].Count + _pieces.BlackBoard[3].Count +
-                  _pieces.BlackBoard[4].Count + _pieces.BlackBoard[5].Count;
-        home = (numHome == 15) ? true : false;
-      } else {
-        home = _blackHome;
-      }
+    /*
+    Constructor with no arguments.
+    Simply calls InitBoardState. Functionality not implemented directly in constructor to allow for
+    the board to be initialized multiple times or a given game i.e. if a game is restarted.
+    */
+    public GameState()
+    {
+        Logger.Debug("(GameState)Constructor called");
+        InitBoardState();
     }
-    TurnState ts = new TurnState(this.IsGameOver(), onbar, home, _playerTurn, _gamePhase);
-    Logger.Debug("(GameState)TurnState Object: " + ts.ToString());
-    return ts;
-  }
 
-  public BoardState GetBoardState() {
-    BoardState boardState = new BoardState();
-    if (PlayerTurn == PlayerEnum.Player1) {
-      boardState.MyBoard = _pieces.WhiteBoard;
-      boardState.OtherBoard = _pieces.BlackBoard;
-      boardState.MyHomeIndex = 25;
-      boardState.OtherHomeIndex = 26;
-      boardState.MyHome = _pieces.WhiteOff;
-      boardState.MyBar = _pieces.WhiteBar;
-      boardState.OtherBar = _pieces.BlackBar;
-
-    } else {
-      boardState.MyBoard = _pieces.BlackBoard;
-      boardState.OtherBoard = _pieces.WhiteBoard;
-      boardState.MyHomeIndex = 26;
-      boardState.OtherHomeIndex = 25;
-      boardState.MyHome = _pieces.BlackOff;
-      boardState.MyBar = _pieces.BlackBar;
-      boardState.OtherBar = _pieces.WhiteBar;
+    /*
+    Called by class constructor or through outside calls when game is started. Sets/resets all the
+    variables of the class including _pieces which creates piece objects for all 30 pieces and
+    organizes them into their correct location groupings withint the PieceState struct.
+    */
+    public void InitBoardState()
+    {
+        Logger.Debug($"(GameState)InitBoardState: game and board initialized");
+        // no pieces start off on the bar
+        _blackOnBar = false;
+        _whiteOnBar = false;
+        // initial layout of board has 5 white pieces in white home and 5 black pieces in black home
+        _blackHome = false;
+        _whiteHome = false;
+        // initialize PieceState struct
+        _pieces = InitPieceState();
+        // no roll has been done yet so roll should be empty array
+        _die = new Die(2, new List<int> { 1, 2 });
+        // get players playing the game currently
+        _players = InitPlayers();
+        // assign one of these players (whichever is Player #1) to start the game
+        _playerTurn = InitPlayerTurn();
+        // init GamePhase to ROLL since ROLL comes before MOVE
+        _gamePhase = GamePhase.ROLL;
+        Logger.Debug($"(GameState)Object: \n" + ToString());
     }
-    return boardState;
-  }
 
-  /*
-  Updates attributes of piece object being moved. Moves piece object within PieceState stuct arrays.
-  Moves any pieces that are moved as a consequence of this piece being moved i.e. overtaking.
-  Parameters:
-      piece - Piece object to be moved
-      boardIndex - Point number that the piece is located on. -1 for on bar, -2 for beared off/ off
-                   board
-  */
-  public bool MovePiece(Piece piece, int boardIndex) {
-    Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
-                piece.ToString() + "\n");
-
-    if (PossibleMoves(piece).Contains(boardIndex)) {
-      Logger.Info(
-          $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
-
-      if (boardIndex == 25 || boardIndex == 26) {  // move to home
-        if (boardIndex != GetBoardState().MyHomeIndex) {
-          Logger.Info("Not your home get out");
-          return false;
+    /*
+    Helper method for InitBoardState. Initializes all piece objects and organizes them into the
+    location groupings of the PieceState struct.
+    */
+    private PieceState InitPieceState()
+    {
+        Logger.Debug($"(GameState)InitPieceState: pieces initialized");
+        List<Piece>[] bb = new List<Piece>[24];
+        List<Piece>[] wb = new List<Piece>[24];
+        for (int i = 0; i < wb.Length; i++)
+        {
+            bb[i] = new List<Piece>();
+            wb[i] = new List<Piece>();
         }
-        return piece.MoveIntoHome();
-      } else {  // move to board
-        return piece.MoveToBoardIndex(boardIndex);
-      }
-    } else {
-      Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
-      return false;
+        PieceState ps = new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(),
+                                       new List<Piece>());
+        return ps;
     }
-  }
 
-  /*
-  Returns a boolean value indicating if the current player cannot move any of their pieces with the
-  rolls they have.
-  */
-  public bool MustPass() {
-    bool mp = false;
-    Logger.Info($"(GameState)MustPass: it is {mp} that the current player must pass their turn.\n");
-    return mp;  // default value will not force the player to pass
-  }
+    /*
+    Helper method for InitBoardState. Initializes _players attribute, the 2 players of the game to
+    their respective player objects and sets one to be "Player #1" and another to be "Player #2". Also
+    initializes _playersTurn to the Player object of these 2 that is labeled "Player #1".
+    */
+    private Player[] InitPlayers()
+    {
+        Logger.Debug($"(GameState)InitPlayers: players initialized");
+        Player[] p = new Player[2];
+        p[0] = new Player(PlayerEnum.Player1);
+        p[1] = new Player(PlayerEnum.Player2);
+        return p;
+    }
+
+    /*
+    Helper method for InitBoardState. Initializes _playerTurn attribute
+    */
+    private PlayerEnum InitPlayerTurn()
+    {
+        Logger.Info($"(GameState)InitPlayerTurn: current player initialized");
+        return _players[0].GetPlayerNum();
+    }
+
+    /*
+    Returns a TurnState struct holding information on current state of game
+    Recall, player1 = white, player2 = black
+    */
+    public TurnState GetTurnState()
+    {
+        Logger.Debug(
+            "(GameState)GetTurnState: Creating TurnState struct to describe GameState instance");
+        bool onbar = false;
+        int numHome;
+        bool home = false;
+        if (_playerTurn == PlayerEnum.Player1)
+        {  // current player is white
+            onbar = _pieces.WhiteBar.Count == 0 ? false : true;
+            if (_whiteHome !=
+                true)
+            {  // will not change from true once the player has gotten all pieces into home
+                numHome = _pieces.WhiteBoard[0].Count + _pieces.WhiteBoard[1].Count +
+                          _pieces.WhiteBoard[2].Count + _pieces.WhiteBoard[3].Count +
+                          _pieces.WhiteBoard[4].Count + _pieces.WhiteBoard[5].Count;
+                home = (numHome == 15) ? true : false;
+            }
+            else
+            {
+                home = _whiteHome;
+            }
+        }
+        else
+        {  // current player is black
+            onbar = _pieces.BlackBar.Count == 0 ? false : true;
+            if (_blackHome !=
+                true)
+            {  // will not change from true once the player has gotten all pieces into home
+                numHome = _pieces.BlackBoard[0].Count + _pieces.BlackBoard[1].Count +
+                          _pieces.BlackBoard[2].Count + _pieces.BlackBoard[3].Count +
+                          _pieces.BlackBoard[4].Count + _pieces.BlackBoard[5].Count;
+                home = (numHome == 15) ? true : false;
+            }
+            else
+            {
+                home = _blackHome;
+            }
+        }
+        TurnState ts = new TurnState(this.IsGameOver(), onbar, home, _playerTurn, _gamePhase);
+        Logger.Debug("(GameState)TurnState Object: " + ts.ToString());
+        return ts;
+    }
+
+    public BoardState GetBoardState()
+    {
+        BoardState boardState = new BoardState();
+        if (PlayerTurn == PlayerEnum.Player1)
+        {
+            boardState.MyBoard = _pieces.WhiteBoard;
+            boardState.OtherBoard = _pieces.BlackBoard;
+            boardState.MyHomeIndex = 25;
+            boardState.OtherHomeIndex = 26;
+            boardState.MyHome = _pieces.WhiteOff;
+            boardState.MyBar = _pieces.WhiteBar;
+            boardState.OtherBar = _pieces.BlackBar;
+
+        }
+        else
+        {
+            boardState.MyBoard = _pieces.BlackBoard;
+            boardState.OtherBoard = _pieces.WhiteBoard;
+            boardState.MyHomeIndex = 26;
+            boardState.OtherHomeIndex = 25;
+            boardState.MyHome = _pieces.BlackOff;
+            boardState.MyBar = _pieces.BlackBar;
+            boardState.OtherBar = _pieces.WhiteBar;
+        }
+        return boardState;
+    }
+
+    /*
+    Updates attributes of piece object being moved. Moves piece object within PieceState stuct arrays.
+    Moves any pieces that are moved as a consequence of this piece being moved i.e. overtaking.
+    Parameters:
+        piece - Piece object to be moved
+        boardIndex - Point number that the piece is located on. -1 for on bar, -2 for beared off/ off
+                     board
+    */
+    public bool MovePiece(Piece piece, int boardIndex)
+    {
+        Logger.Info($"(GameState)MovePiece: piece moved to index {boardIndex}.\n\tPiece moved: " +
+                    piece.ToString() + "\n");
+
+        if (PossibleMoves(piece).Contains(boardIndex))
+        {
+            Logger.Info(
+                $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
+
+            if (boardIndex == 25 || boardIndex == 26)
+            {  // move to home
+                if (boardIndex != GetBoardState().MyHomeIndex)
+                {
+                    Logger.Info("Not your home get out");
+                    return false;
+                }
+                return piece.MoveIntoHome();
+            }
+            else
+            {  // move to board
+                return piece.MoveToBoardIndex(boardIndex);
+            }
+        }
+        else
+        {
+            Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
+            return false;
+        }
+    }
+
+    /*
+    Returns a boolean value indicating if the current player cannot move any of their pieces with the
+    rolls they have.
+    */
+    public bool MustPass()
+    {
+        bool mp = false;
+        Logger.Info($"(GameState)MustPass: it is {mp} that the current player must pass their turn.\n");
+        return mp;  // default value will not force the player to pass
+    }
 
   /*
   Checks if the game is over. The game will be over if either of the players have all of their
@@ -378,121 +421,182 @@ public class GameState {
     return igo;  // default value allows game to be played infinitely
   }
 
-  /*
-  Returns an array of point indices of points in which a given piece is eligible to move based on
-  the rules of backgammon.
-  */
-  public List<int> PossibleMoves(Piece piece) {
-    List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
+    /*
+    Returns an array of point indices of points in which a given piece is eligible to move based on
+    the rules of backgammon.
+    */
+    public List<int> PossibleMoves(Piece piece)
+    {
+        List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
                                       14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
-    string move = "\n" + string.Join(",", moves);
-    Logger.Info(
-        $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
-    return moves;  // default value for now
-  }
-
-  /*
-  Updates GameState variables when the play switches from one player to another.
-  Set to public for unit testing purposes.
-  */
-  public void ChangeCurrentPlayer() {
-    Logger.Info(
-        "(GameState)ChangePlayer: Changing the currently playing player to the other player.");
-    if (_playerTurn == _players[0].PlayerNum) {  // current player is first player in _players array
-      _playerTurn = _players[1].GetPlayerNum();
-      Logger.Debug("\t\t" + _players[0].GetPlayerNum().ToString() + " -> " +
-                   _players[1].GetPlayerNum().ToString());
-    } else {  // current player is first player in _players array
-      _playerTurn = _players[0].GetPlayerNum();
-      Logger.Debug("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
-                   _players[0].GetPlayerNum().ToString());
+        string move = "\n" + string.Join(",", moves);
+        Logger.Info(
+            $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
+        return moves;  // default value for now
     }
-    _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
-    _gamePhase = GamePhase.ROLL;
-  }
 
-  /**
-   * Attempts to pick up a piece. if a piece is already
-   * held return false
-   * @param piece - piece to pick up, if null It means drop the current piece
-   **/
-  public bool SetPieceInHand(Piece piece) {
-    if (piece == null) {  // Drop piece
-      _pieces.PieceInHand = null;
-      // Todo check if piece can be dropped.
-      return true;
-    } else if (_pieces.PieceInHand != null) {  // Failed
-      Logger.Info("Piece already held", "PIECE");
-      return false;
-    } else {  // Success
-      if (this._gamePhase != GamePhase.MOVE) {
-        Logger.Warn("You are not in the Move phase Piece can't be moved");
-        return false;
-      } else if (piece.GetPieceStatus().PieceLocation ==
-                 PieceStatus.PieceLocationEnum
-                     .inHome) {  // Shouldn't be able to move pieces in home
-        Logger.Warn("Piece already in home can't be moved");
-        return false;
-      } else if (!(piece.GetPieceStatus().PieceLocation ==
-                   PieceStatus.PieceLocationEnum.OnBar)) {  // if its on the bar its an auto pass
-                                                            // (owner has already been checked)
-        if (this._playerTurn == PlayerEnum.Player1) {
-          if (this._whiteOnBar) {  // Can't move piece if there is one on the bar
-            Logger.Warn("White Player has a piece on the bar");
-            return false;
-          }
-        } else {
-          if (this._blackOnBar) {  // Can't move piece if there is one on the bar
-            Logger.Warn("Black Player has a piece on the bar");
-            return false;
-          }
+    /*
+    Updates GameState variables when the play switches from one player to another.
+    Set to public for unit testing purposes.
+    */
+    public void ChangeCurrentPlayer()
+    {
+        Logger.Info(
+            "(GameState)ChangePlayer: Changing the currently playing player to the other player.");
+        if (_playerTurn == _players[0].PlayerNum)
+        {  // current player is first player in _players array
+            _playerTurn = _players[1].GetPlayerNum();
+            Logger.Debug("\t\t" + _players[0].GetPlayerNum().ToString() + " -> " +
+                         _players[1].GetPlayerNum().ToString());
         }
-      }
-      Logger.Info($"Picking up Piece: {piece.ToString()}");
-      _pieces.PieceInHand = piece;
-      return true;
-    }
-  }
+        else
+        {  // current player is first player in _players array
+            _playerTurn = _players[0].GetPlayerNum();
+            Logger.Debug("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
+                         _players[0].GetPlayerNum().ToString());
+        }
+        _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
+        _gamePhase = GamePhase.ROLL;
 
-  /*
-  String description of the entire GameState instance.
-  */
-  public override string ToString() {
-    string indent = "\t";
-    string die = _die.ToString(indent);
-    string players = PlayersToString(indent);
-    string playerTurn = _playerTurn.ToString();
-    return indent + $"(BlackOnBar: {_blackOnBar}\n" + indent + $"WhiteOnBar: {_whiteOnBar}\n" +
-           indent + $"BlackHome: {_blackHome}\n" + indent + $"Whitehome: {_whiteHome}\n" + indent +
-           $"Pieces: {_pieces.ToString(indent)}" + indent + $"Die: " + die + "\n" + indent +
-           $"Players: " + players + indent + $"PlayerTurn: " + playerTurn + "\n" + indent +
-           $"GamePhase: {_gamePhase})";
-  }
+        // Change PlayerIcon prefab colours according to current player
+        GameObject playerIcon1 = GameObject.Find("PlayerIcon1");
+        GameObject playerIcon2 = GameObject.Find("PlayerIcon2");
+        GameObject playerName1 = GameObject.Find("PlayerName1");
+        GameObject playerName2 = GameObject.Find("PlayerName2");
+        if (_playerTurn == _players[0].PlayerNum)
+        {    
+            // Highlight current player icon and name
+            playerIcon1.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(1, 0.7358f, 0, 1); //gold-ish colour
+            playerName1.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Bold;
+            // Un-highlight other player icon and name
+            playerIcon2.transform.Find("Background").GetComponent<SpriteRenderer>().color = Color.black;
+            playerName2.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Normal;
+        }
+        if (_playerTurn == _players[1].PlayerNum)
+        {
+            // Highlight current player icon and name
+            playerIcon2.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(1, 0.7358f, 0, 1);
+            playerName2.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Bold;
+            // Un-highlight other player icon and name
+            playerIcon1.transform.Find("Background").GetComponent<SpriteRenderer>().color = Color.black;
+            playerName1.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Normal;
+        }
 
-  // TODO REMOVE once piece init is complete
-  public Player GetPlayer(PlayerEnum playerNum) {
-    if (playerNum == PlayerEnum.Player1) {
-      return _players[0];
-    } else {
-      return _players[1];
-    }
-  }
-  /*
-  Helper method for ToString method. Creates a string to describe the _players attribute of the
-  GameState instance.
-  */
-  private string PlayersToString(string indentOut = "") {
-    string indentIn = indentOut + "\t";
-    string players = "\n";
-    foreach (Player player in _players) {
-      players += indentIn + player.ToString() + ",\n";
-    }
-    return players;
-  }
 
-/** These functions will not be in the final release and shouldn't be
- * used anywhere execpt the debuging menu and maybe unit tests
- */
+
+
+
+        // foreach (Transform t in gameObject.transform) {
+        //   if (t.gameObject.name == "PieceFlat") {
+        //     t.gameObject.GetComponent<SpriteRenderer>().color = pieceFlat;
+
+    }
+
+    /**
+     * Attempts to pick up a piece. if a piece is already
+     * held return false
+     * @param piece - piece to pick up, if null It means drop the current piece
+     **/
+    public bool SetPieceInHand(Piece piece)
+    {
+        if (piece == null)
+        {  // Drop piece
+            _pieces.PieceInHand = null;
+            // Todo check if piece can be dropped.
+            return true;
+        }
+        else if (_pieces.PieceInHand != null)
+        {  // Failed
+            Logger.Info("Piece already held", "PIECE");
+            return false;
+        }
+        else
+        {  // Success
+            if (this._gamePhase != GamePhase.MOVE)
+            {
+                Logger.Warn("You are not in the Move phase Piece can't be moved");
+                return false;
+            }
+            else if (piece.GetPieceStatus().PieceLocation ==
+                     PieceStatus.PieceLocationEnum
+                         .inHome)
+            {  // Shouldn't be able to move pieces in home
+                Logger.Warn("Piece already in home can't be moved");
+                return false;
+            }
+            else if (!(piece.GetPieceStatus().PieceLocation ==
+                       PieceStatus.PieceLocationEnum.OnBar))
+            {  // if its on the bar its an auto pass
+               // (owner has already been checked)
+                if (this._playerTurn == PlayerEnum.Player1)
+                {
+                    if (this._whiteOnBar)
+                    {  // Can't move piece if there is one on the bar
+                        Logger.Warn("White Player has a piece on the bar");
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (this._blackOnBar)
+                    {  // Can't move piece if there is one on the bar
+                        Logger.Warn("Black Player has a piece on the bar");
+                        return false;
+                    }
+                }
+            }
+            Logger.Info($"Picking up Piece: {piece.ToString()}");
+            _pieces.PieceInHand = piece;
+            return true;
+        }
+    }
+
+    /*
+    String description of the entire GameState instance.
+    */
+    public override string ToString()
+    {
+        string indent = "\t";
+        string die = _die.ToString(indent);
+        string players = PlayersToString(indent);
+        string playerTurn = _playerTurn.ToString();
+        return indent + $"(BlackOnBar: {_blackOnBar}\n" + indent + $"WhiteOnBar: {_whiteOnBar}\n" +
+               indent + $"BlackHome: {_blackHome}\n" + indent + $"Whitehome: {_whiteHome}\n" + indent +
+               $"Pieces: {_pieces.ToString(indent)}" + indent + $"Die: " + die + "\n" + indent +
+               $"Players: " + players + indent + $"PlayerTurn: " + playerTurn + "\n" + indent +
+               $"GamePhase: {_gamePhase})";
+    }
+
+    // TODO REMOVE once piece init is complete
+    public Player GetPlayer(PlayerEnum playerNum)
+    {
+        if (playerNum == PlayerEnum.Player1)
+        {
+            return _players[0];
+        }
+        else
+        {
+            return _players[1];
+        }
+    }
+    /*
+    Helper method for ToString method. Creates a string to describe the _players attribute of the
+    GameState instance.
+    */
+    private string PlayersToString(string indentOut = "")
+    {
+        string indentIn = indentOut + "\t";
+        string players = "\n";
+        foreach (Player player in _players)
+        {
+            players += indentIn + player.ToString() + ",\n";
+        }
+        return players;
+    }
+
+    /** These functions will not be in the final release and shouldn't be
+     * used anywhere execpt the debuging menu and maybe unit tests
+     */
 #if DEBUG_MENU
 
   public void ChangeState(GamePhase phase) {
