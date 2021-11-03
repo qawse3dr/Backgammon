@@ -51,9 +51,9 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
         piecesList = GameHandler.Game.Pieces.BlackBoard;
       }
       // Checks thats its on the top.
-      if(_onBar){
+      if (_onBar) {
         BoardState boardState = GameHandler.Game.GetBoardState();
-        if(boardState.OtherBar.IndexOf(this) != boardState.OtherBar.Count - 1){
+        if (boardState.OtherBar.IndexOf(this) != boardState.OtherBar.Count - 1) {
           Logger.Warn("Please select the top pieces");
           return;
         }
@@ -184,13 +184,12 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     _boardIndex = -1;
     Logger.Info($"Piece move to bar: {ToString()}");
     boardState.MyBar.Add(this);
-    
 
-    if(Owner.PlayerNum == PlayerEnum.Player1){
-      deltaY = 1.287123f - (0.55f)*(boardState.MyBar.Count - 1);
+    if (Owner.PlayerNum == PlayerEnum.Player1) {
+      deltaY = 1.287123f - (0.55f) * (boardState.MyBar.Count - 1);
 
-    } else if(Owner.PlayerNum == PlayerEnum.Player2) {
-      deltaY = -3.885724f + (0.55f)*(boardState.MyBar.Count - 1);
+    } else if (Owner.PlayerNum == PlayerEnum.Player2) {
+      deltaY = -3.885724f + (0.55f) * (boardState.MyBar.Count - 1);
     }
     transform.position = new Vector2(deltaX, deltaY);
   }
