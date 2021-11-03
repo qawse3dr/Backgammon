@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.SceneManagement;
 using Logger = LNAR.Logger;
 
 public class TestGameState {
-  [SetUp]
-  public void Setup() {
+  [UnitySetUp]
+  public IEnumerator Setup() {
+    SceneManager.LoadScene("Backgammon");
     GameHandler.Game = new GameState();
+    yield return new WaitForSeconds(1);
   }
+
   [Test]
   public void Test_GamePhaseToString1() {
     GamePhase gp = GamePhase.ROLL;

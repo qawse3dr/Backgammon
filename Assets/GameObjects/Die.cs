@@ -134,6 +134,10 @@ public class Die {
       Logger.Debug($"(Die)ClearRoll: {roll} from available rolls removed.");
       Rolls.Remove(roll);
 
+      // If die are used up, switch to next player's turn
+      if (Rolls.Count == 0) {
+        GameHandler.Game.ChangeCurrentPlayer();
+      }
       // Greys out the die if it isn't a double and if it is only do it on 0 and 2
       if (!_doubles || (_doubles && (Rolls.Count() == 0 || Rolls.Count() == 2))) {
         _Die[index].IsGrey = true;

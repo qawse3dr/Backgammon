@@ -382,7 +382,6 @@ RectTransform:
   m_Children:
   - {fileID: 740092389}
   - {fileID: 1439210288}
-  - {fileID: 740092389}
   m_Father: {fileID: 1871019677}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1631,7 +1630,7 @@ GameObject:
   - component: {fileID: 1195680812}
   - component: {fileID: 1195680811}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2350,7 +2349,7 @@ GameObject:
   - component: {fileID: 1490069934}
   - component: {fileID: 1490069933}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2810,7 +2809,7 @@ GameObject:
   - component: {fileID: 1736339979}
   - component: {fileID: 1736339978}
   m_Layer: 5
-  m_Name: Player1Name
+  m_Name: PlayerName1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2984,7 +2983,7 @@ GameObject:
   - component: {fileID: 1805256400}
   - component: {fileID: 1805256399}
   m_Layer: 5
-  m_Name: Player2Name
+  m_Name: PlayerName2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3698,6 +3697,14 @@ PrefabInstance:
     - target: {fileID: 3676017708213211017, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
       propertyPath: m_Name
       value: PlayerIcon1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4040816210035969879, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
+      propertyPath: m_Color.g
+      value: 0.7358
+      objectReference: {fileID: 0}
+    - target: {fileID: 4040816210035969879, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6439798693255212240, guid: 90fe7d9ef1d6145e2b367f556ef692c3, type: 3}
       propertyPath: m_RootOrder

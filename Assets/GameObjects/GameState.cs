@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine.UI;
 using UnityEngine;
 using Logger = LNAR.Logger;
 /*
@@ -409,6 +410,34 @@ public class GameState {
     }
     _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
+
+    // Change PlayerIcon prefab colours according to current player
+    GameObject playerIcon1 = GameObject.Find("PlayerIcon1");
+    GameObject playerIcon2 = GameObject.Find("PlayerIcon2");
+    GameObject playerName1 = GameObject.Find("PlayerName1");
+    GameObject playerName2 = GameObject.Find("PlayerName2");
+    if (_playerTurn == _players[0].PlayerNum) {
+      // Highlight current player icon and name
+      playerIcon1.transform.Find("Background").GetComponent<SpriteRenderer>().color =
+          new Color(1, 0.7358f, 0, 1);  // gold-ish colour
+      playerName1.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Bold;
+      // Un-highlight other player icon and name
+      playerIcon2.transform.Find("Background").GetComponent<SpriteRenderer>().color = Color.black;
+      playerName2.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Normal;
+    }
+    if (_playerTurn == _players[1].PlayerNum) {
+      // Highlight current player icon and name
+      playerIcon2.transform.Find("Background").GetComponent<SpriteRenderer>().color =
+          new Color(1, 0.7358f, 0, 1);
+      playerName2.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Bold;
+      // Un-highlight other player icon and name
+      playerIcon1.transform.Find("Background").GetComponent<SpriteRenderer>().color = Color.black;
+      playerName1.transform.Find("Name").GetComponent<Text>().fontStyle = FontStyle.Normal;
+    }
+
+    // foreach (Transform t in gameObject.transform) {
+    //   if (t.gameObject.name == "PieceFlat") {
+    //     t.gameObject.GetComponent<SpriteRenderer>().color = pieceFlat;
   }
 
   /**
@@ -490,9 +519,9 @@ public class GameState {
     return players;
   }
 
-/** These functions will not be in the final release and shouldn't be
- * used anywhere execpt the debuging menu and maybe unit tests
- */
+  /** These functions will not be in the final release and shouldn't be
+   * used anywhere execpt the debuging menu and maybe unit tests
+   */
 #if DEBUG_MENU
 
   public void ChangeState(GamePhase phase) {
