@@ -421,8 +421,10 @@ public class GameState {
           return false;
         }
         result = piece.MoveIntoHome();
+        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       } else {  // move to board
         result = piece.MoveToBoardIndex(boardIndex);
+        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       }
     } else {
       Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
@@ -430,7 +432,10 @@ public class GameState {
     }
 
     // Update Game state
-    _die.ClearRoll(posMoves[indexOfPoint].roll);
+    if ( result) {
+      _die.ClearRoll(posMoves[indexOfPoint].roll);
+    }
+
     UpdateGameState();
     Logger.Debug($"(GameState)Object: \n" + ToString());
     return result;
