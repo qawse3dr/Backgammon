@@ -22,7 +22,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   private bool _onBar;
   private bool _inHome;
   private bool _isPickedUp;
-  private bool inited = false;
 
   // Used to reset the piece object if moving it fails
   private Vector2 _previousPostion;
@@ -288,7 +287,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     boardState.MyBoard[boardIndex - 1].Add(this);
 
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
-      Logger.Info("Overtaking not implemented yet");
+      Logger.Info("Overtaking");
       Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
       boardState.OtherBoard[boardIndex - 1].Remove(otherPiece);
       otherPiece.MoveToBar();
