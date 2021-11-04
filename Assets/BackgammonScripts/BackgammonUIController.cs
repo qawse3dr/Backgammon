@@ -60,4 +60,9 @@ public class BackgammonUIController : MonoBehaviour {
     buttonBorder.enabled = true;
     panelBorder.enabled = true;
   }
+  public void RollDice() {
+    Logger.Debug("Rolling dice");
+    GameHandler.Game.RollDice();
+    GameObject.Find("Roll").GetComponent<Text>().enabled = false;
+  }
 }

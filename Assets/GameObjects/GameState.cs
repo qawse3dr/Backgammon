@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -212,7 +213,8 @@ public class GameState {
     // initialize PieceState struct
     _pieces = InitPieceState();
     // no roll has been done yet so roll should be empty array
-    _die = new Die(2, new List<int> { 1, 2 });
+    _die = new Die(
+        2, new List<int> { DateTime.Now.Millisecond, DateTime.Now.Millisecond + 1 });  // 2 Dice
     // get players playing the game currently
     _players = InitPlayers();
     // assign one of these players (whichever is Player #1) to start the game
@@ -459,8 +461,10 @@ public class GameState {
       Logger.Debug("\t\t" + _players[1].GetPlayerNum().ToString() + " -> " +
                    _players[0].GetPlayerNum().ToString());
     }
-    _die = new Die(2, new List<int> { 3, 4 });  // 2 Dice
+    _die = new Die(
+        2, new List<int> { DateTime.Now.Millisecond, DateTime.Now.Millisecond + 1 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
+    GameObject.Find("Roll").GetComponent<Text>().enabled = true;
 
     // Change PlayerIcon prefab colours according to current player
     GameObject playerIcon1 = GameObject.Find("PlayerIcon1");
@@ -564,6 +568,14 @@ public class GameState {
       players += indentIn + player.ToString() + ",\n";
     }
     return players;
+  }
+
+  public void RollDice() {
+    GameObject die1 = GameObject.Find("Die1");
+    GameObject die2 = GameObject.Find("Die2");
+    _die.Roll();
+    die1.GetComponentInChildren<Text>().text = _die.Rolls[0].ToString();
+    die2.GetComponentInChildren<Text>().text = _die.Rolls[1].ToString();
   }
 
   /** These functions will not be in the final release and shouldn't be
