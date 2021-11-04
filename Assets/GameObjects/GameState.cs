@@ -130,7 +130,7 @@ public struct PieceState {
     string pieces = "";
     string indentIn = indentOut + "\t";
     for (int i = 0; i < ps.Count; i++) {
-      if(ps[i])
+      if (ps[i])
         pieces += indentIn + ps[i].ToString() + "\n";
       else
         pieces += indentIn + "null" + "\n";
@@ -411,7 +411,7 @@ public class GameState {
     }
     var posMoves = PossibleMoves(piece);
     int indexOfPoint = posMoves.FindIndex(rp => rp.point == boardIndex);
-    if ( indexOfPoint != -1) {
+    if (indexOfPoint != -1) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
 
@@ -511,7 +511,7 @@ public class GameState {
         rollPlusPoint.Add((r, curPoint + dir * r));  // newPoint = curPoint + (direction) * roll
       }
     }
-    foreach ((int roll, int point) rollPoint in rollPlusPoint) {
+    foreach ((int roll, int point)rollPoint in rollPlusPoint) {
       // remove any moves which have 1+ of the other players' pieces on the target point
       if (otherPlayer[rollPoint.roll].Count > 1) {
         toRemove.Add(rollPoint);
@@ -526,22 +526,22 @@ public class GameState {
       }
     }
     // Remove points marked for remove.
-    foreach( var rollPoint in toRemove) {
+    foreach (var rollPoint in toRemove) {
       rollPlusPoint.Remove(rollPoint);
     }
     rollPlusPoint.AddRange(toAdd);  // replacements for out of range points
 
-    
     // for unit testing allow any moves
 #if DEBUG_MENU
     if (AllowAnyMove) {
       return new List<(int roll, int point)> {
-        (_die.Rolls[0], 1),  (_die.Rolls[0], 2),  (_die.Rolls[0], 3),  (_die.Rolls[0], 4),  (_die.Rolls[0], 5),
-        (_die.Rolls[0], 6),  (_die.Rolls[0], 6),  (_die.Rolls[0], 8),  (_die.Rolls[0], 9),  (_die.Rolls[0], 10),
-        (_die.Rolls[0], 11), (_die.Rolls[0], 12), (_die.Rolls[0], 13), (_die.Rolls[0], 14), (_die.Rolls[0], 15),
-        (_die.Rolls[0], 16), (_die.Rolls[0], 17), (_die.Rolls[0], 18), (_die.Rolls[0], 19), (_die.Rolls[0], 20),
-        (_die.Rolls[0], 21), (_die.Rolls[0], 22), (_die.Rolls[0], 23), (_die.Rolls[0], 24), (_die.Rolls[0], 25),
-        (_die.Rolls[0], 26)
+        (_die.Rolls[0], 1),  (_die.Rolls[0], 2),  (_die.Rolls[0], 3),  (_die.Rolls[0], 4),
+        (_die.Rolls[0], 5),  (_die.Rolls[0], 6),  (_die.Rolls[0], 6),  (_die.Rolls[0], 8),
+        (_die.Rolls[0], 9),  (_die.Rolls[0], 10), (_die.Rolls[0], 11), (_die.Rolls[0], 12),
+        (_die.Rolls[0], 13), (_die.Rolls[0], 14), (_die.Rolls[0], 15), (_die.Rolls[0], 16),
+        (_die.Rolls[0], 17), (_die.Rolls[0], 18), (_die.Rolls[0], 19), (_die.Rolls[0], 20),
+        (_die.Rolls[0], 21), (_die.Rolls[0], 22), (_die.Rolls[0], 23), (_die.Rolls[0], 24),
+        (_die.Rolls[0], 25), (_die.Rolls[0], 26)
       };
     }
 #endif

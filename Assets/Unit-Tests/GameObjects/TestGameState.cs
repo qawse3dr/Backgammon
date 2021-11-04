@@ -91,7 +91,6 @@ public class TestGameState {
 
   [Test]
   public void Test_MovePiece() {
-
     GameHandler.Game.AllowAnyMove = true;
     GameHandler.Game.RollDice(GameObject.FindObjectOfType<BackgammonUIController>());
     GameHandler.Game.ChangeState(GamePhase.MOVE);
@@ -99,7 +98,8 @@ public class TestGameState {
       go.GetComponent<Piece>().Start();
       go.GetComponent<Piece>().Update();
     }
-    Assert.True(GameHandler.Game.MovePiece(GameObject.FindGameObjectWithTag("Piece").GetComponent<Piece>(), 2));
+    Assert.True(GameHandler.Game.MovePiece(
+        GameObject.FindGameObjectWithTag("Piece").GetComponent<Piece>(), 2));
   }
 
   public void Test_MovePieceSameSpot() {
@@ -172,5 +172,4 @@ public class TestGameState {
     Assert.AreEqual(wBoard[16].Count, 3);  // 3 white pieces on point 17 (index 16)
     Assert.AreEqual(wBoard[18].Count, 5);  // 5 white pieces on point 19 (index 18)
   }
-
 }
