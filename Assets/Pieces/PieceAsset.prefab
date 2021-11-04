@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6789783681032761159}
   m_Layer: 0
   m_Name: PieceAsset
-  m_TagString: Untagged
+  m_TagString: Piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,6 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 653ee70dc15f9f610b8b640566005d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StartingOwner: 0
+  StartPointIndex: 0
+  StartVerticality: 0
 --- !u!58 &6789783681032761159
 CircleCollider2D:
   m_ObjectHideFlags: 0
