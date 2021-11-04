@@ -89,6 +89,7 @@ public class TestGameState {
   [Test]
   public void Test_MovePiece() {
     GameState gs = new GameState();
+    gs.AllowAnyMove = true;
     gs.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
@@ -99,6 +100,7 @@ public class TestGameState {
   public void Test_MovePieceSameSpot() {
     GameState gs = new GameState();
     gs.ChangeState(GamePhase.MOVE);
+    gs.AllowAnyMove = true;
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
 
     pc.Owner = new Player(PlayerEnum.Player1);

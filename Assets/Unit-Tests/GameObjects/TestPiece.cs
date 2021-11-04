@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor.SceneTemplate;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
 using Logger = LNAR.Logger;
@@ -12,9 +13,11 @@ public class TestPiece {
   private Player _player;
   private GameObject _pieceGameObject;
   private Piece _piece;
-  [SetUp]
-  public void SetUp() {
-    Logger.Debug("test");
+  [UnitySetUp]
+  public IEnumerator SetUp() {
+    SceneManager.LoadScene("Backgammon");
+    GameHandler.Game = new GameState();
+    yield return new WaitForSeconds(1);
     _player = new Player(PlayerEnum.Player1);
     GameHandler.Game = new GameState();
     _pieceGameObject = CreateMockPieceObject();
@@ -94,6 +97,7 @@ public class TestPiece {
     // Create gamestate object
     GameHandler.Game = new GameState();
     GameHandler.Game.ChangeState(GamePhase.MOVE);
+    GameHandler.Game.AllowAnyMove = true;
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.Start();
@@ -108,6 +112,7 @@ public class TestPiece {
   public void Test_PickUpPieceWithPieceInHand() {
     // Create gamestate object
     GameHandler.Game = new GameState();
+    GameHandler.Game.AllowAnyMove = true;
     GameHandler.Game.ChangeState(GamePhase.MOVE);
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
@@ -129,6 +134,7 @@ public class TestPiece {
     // Create gamestate object
     GameHandler.Game = new GameState();
     GameHandler.Game.ChangeState(GamePhase.MOVE);
+    GameHandler.Game.AllowAnyMove = true;
     Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     pc.Owner = new Player(PlayerEnum.Player1);
     pc.Start();
@@ -150,6 +156,7 @@ public class TestPiece {
   [Test]
   public void Test_MoveToHomeYourTurnAndMovePhase() {
     GameHandler.Game = new GameState();
+    GameHandler.Game.AllowAnyMove = true;
     GameHandler.Game.ChangeWhiteHome(true);
     GameHandler.Game.ChangeState(GamePhase.MOVE);
 
