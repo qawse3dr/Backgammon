@@ -16,6 +16,13 @@ public class BackgammonUIController : MonoBehaviour {
   public Text mainMenu;
   public Text winner;
 
+  public Sprite Die1;
+  public Sprite Die2;
+  public Sprite Die3;
+  public Sprite Die4;
+  public Sprite Die5;
+  public Sprite Die6;
+
   void Start() {
     image.enabled = false;
     text.enabled = false;
@@ -62,7 +69,7 @@ public class BackgammonUIController : MonoBehaviour {
   }
   public void RollDice() {
     Logger.Debug("Rolling dice");
-    GameHandler.Game.RollDice();
+    GameHandler.Game.RollDice(this);
     GameObject.Find("Roll").GetComponent<Text>().enabled = false;
   }
 }
