@@ -49,3 +49,6 @@ TagManager:
   - name: Pieces
     uniqueID: 2113582379
     locked: 0
+  - name: GameOver
+    uniqueID: 2323450029
+    locked: 0
