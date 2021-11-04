@@ -570,12 +570,34 @@ public class GameState {
     return players;
   }
 
-  public void RollDice() {
+  // Passes the controller so it has access to the sprites
+  public void RollDice(BackgammonUIController uiController) {
     GameObject die1 = GameObject.Find("Die1");
     GameObject die2 = GameObject.Find("Die2");
     _die.Roll();
-    die1.GetComponentInChildren<Text>().text = _die.Rolls[0].ToString();
-    die2.GetComponentInChildren<Text>().text = _die.Rolls[1].ToString();
+
+    foreach ((GameObject go, int index)go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
+      switch (_die.Rolls[go.index]) {
+        case 1:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die1;
+          break;
+        case 2:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die2;
+          break;
+        case 3:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die3;
+          break;
+        case 4:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die4;
+          break;
+        case 5:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die5;
+          break;
+        case 6:
+          go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die6;
+          break;
+      }
+    }
   }
 
   /** These functions will not be in the final release and shouldn't be
