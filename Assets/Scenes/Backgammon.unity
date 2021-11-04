@@ -4530,7 +4530,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8577468312122907322, guid: b5a3f6fdfc55a4d8b83dd3b235b347b5, type: 3}
       propertyPath: StartVerticality
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9075355155280937672, guid: b5a3f6fdfc55a4d8b83dd3b235b347b5, type: 3}
       propertyPath: StartingOwner
