@@ -3754,12 +3754,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14b66847c96fcdb389fe3cafa0e3cc3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
-  buttonBorder: {fileID: 0}
-  panelBorder: {fileID: 0}
-  text: {fileID: 0}
-  mainMenu: {fileID: 0}
-  winner: {fileID: 0}
+  image: {fileID: 1953375109}
+  buttonBorder: {fileID: 1167447295}
+  panelBorder: {fileID: 512529195}
+  text: {fileID: 1625626028}
+  mainMenu: {fileID: 1050544110}
+  winner: {fileID: 759514934}
   Die1: {fileID: 21300000, guid: d3daa09f566a11aa49ca614c8f655de9, type: 3}
   Die2: {fileID: 21300000, guid: 681cb5063151b4efe95b428e38e232ad, type: 3}
   Die3: {fileID: 21300000, guid: 50f39cf366a7bd5439a3da057f5e0cd3, type: 3}

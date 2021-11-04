@@ -16,14 +16,15 @@ public class TestPiece {
   [UnitySetUp]
   public IEnumerator SetUp() {
     SceneManager.LoadScene("Backgammon");
-    GameHandler.Game = new GameState();
     yield return new WaitForSeconds(1);
+    foreach (GameObject go in GameObject.FindGameObjectsWithTag("Piece")) {
+      go.GetComponent<Piece>().Start();
+      go.GetComponent<Piece>().Update();
+    }
     _player = new Player(PlayerEnum.Player1);
     GameHandler.Game = new GameState();
-    _pieceGameObject = CreateMockPieceObject();
+    _pieceGameObject = GameHandler.Game.Pieces.WhiteBoard[0][0].gameObject;
     _piece = _pieceGameObject.GetComponent<Piece>();
-    _piece.Owner = _player;
-    _piece.Start();
   }
 
   private GameObject CreateMockPieceObject() {
