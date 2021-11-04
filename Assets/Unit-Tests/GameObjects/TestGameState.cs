@@ -172,4 +172,5 @@ public class TestGameState {
     Assert.AreEqual(wBoard[16].Count, 3);  // 3 white pieces on point 17 (index 16)
     Assert.AreEqual(wBoard[18].Count, 5);  // 5 white pieces on point 19 (index 18)
   }
+
 }

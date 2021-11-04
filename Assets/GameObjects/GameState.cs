@@ -223,6 +223,7 @@ public class GameState {
     _playerTurn = InitPlayerTurn();
     // init GamePhase to ROLL since ROLL comes before MOVE
     _gamePhase = GamePhase.ROLL;
+    // Logger.Debug($"(GameState)Object: \n" + ToString());
   }
 
   /*
