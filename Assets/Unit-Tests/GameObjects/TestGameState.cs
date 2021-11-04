@@ -9,8 +9,8 @@ using Logger = LNAR.Logger;
 public class TestGameState {
   [UnitySetUp]
   public IEnumerator Setup() {
-    SceneManager.LoadScene("Backgammon");
     GameHandler.Game = new GameState();
+    SceneManager.LoadScene("Backgammon");
     yield return new WaitForSeconds(3);
   }
 
@@ -77,7 +77,6 @@ public class TestGameState {
 
   [Test]
   public void Test_SetPieceInHandWhenPieceInHand() {
-
     GameHandler.Game.ChangeState(GamePhase.MOVE);
     foreach (GameObject go in GameObject.FindGameObjectsWithTag("Piece")) {
       go.GetComponent<Piece>().Start();

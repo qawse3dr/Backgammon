@@ -185,9 +185,7 @@ public class GameState {
   public PlayerEnum PlayerTurn => _playerTurn;
   private GamePhase _gamePhase;
 
-#if DEBUG_MENU
   public bool AllowAnyMove = false;
-#endif
 
   /*
   Constructor with no arguments.
@@ -299,6 +297,11 @@ public class GameState {
   public void AddPieceInit(Piece piece, int verticality) {
     Logger.Debug(
         $"Initializing piece at verticality {verticality} on point {piece.StartPointIndex}");
+
+    if (piece.StartPointIndex < 1 || verticality < 1) {
+      Logger.Error("PIECE INDEX IS TO SMALL");
+      return;
+    }
     if (piece.Owner.PlayerNum == PlayerEnum.Player1) {
       List<Piece> point = _pieces.WhiteBoard[piece.StartPointIndex - 1];
       point[verticality - 1] = piece;
@@ -409,8 +412,17 @@ public class GameState {
       Logger.Warn("Game is over you can't move pieces");
       return false;
     }
-    var posMoves = PossibleMoves(piece);
-    int indexOfPoint = posMoves.FindIndex(rp => rp.point == boardIndex - 1);
+
+    List<(int roll, int point)> posMoves = null;
+    int indexOfPoint;
+
+    if (AllowAnyMove) {
+      indexOfPoint = boardIndex;
+    } else {
+      posMoves = PossibleMoves(piece);
+      indexOfPoint = posMoves.FindIndex(rp => rp.point == boardIndex - 1);
+    }
+
     if (indexOfPoint != -1) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
@@ -432,7 +444,7 @@ public class GameState {
     }
 
     // Update Game state
-    if (result) {
+    if (result && !AllowAnyMove) {
       Logger.Debug(
           $"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
       _die.ClearRoll(posMoves[indexOfPoint].roll);
@@ -479,6 +491,20 @@ public class GameState {
   the rules of backgammon.
   */
   public List<(int roll, int point)> PossibleMoves(Piece piece) {
+    // for unit testing allow any moves
+    if (AllowAnyMove) {
+      Logger.Debug("ALlowAnyMove");
+      return new List<(int roll, int point)> {
+        (_die.Rolls[0], 1),  (_die.Rolls[0], 2),  (_die.Rolls[0], 3),  (_die.Rolls[0], 4),
+        (_die.Rolls[0], 5),  (_die.Rolls[0], 6),  (_die.Rolls[0], 6),  (_die.Rolls[0], 8),
+        (_die.Rolls[0], 9),  (_die.Rolls[0], 10), (_die.Rolls[0], 11), (_die.Rolls[0], 12),
+        (_die.Rolls[0], 13), (_die.Rolls[0], 14), (_die.Rolls[0], 15), (_die.Rolls[0], 16),
+        (_die.Rolls[0], 17), (_die.Rolls[0], 18), (_die.Rolls[0], 19), (_die.Rolls[0], 20),
+        (_die.Rolls[0], 21), (_die.Rolls[0], 22), (_die.Rolls[0], 23), (_die.Rolls[0], 24),
+        (_die.Rolls[0], 25), (_die.Rolls[0], 26)
+      };
+    }
+
     List<(int roll, int point)> rollPlusPoint = new List<(
         int roll, int point)> {};  // return roll as well as point so that when move is made,
                                    // ClearRoll(roll) can be used to remove the corresponding roll
@@ -549,21 +575,6 @@ public class GameState {
       rollPlusPoint.Remove(rp);
     }
     rollPlusPoint.AddRange(toAdd);  // replacements for out of range points
-
-    // for unit testing allow any moves
-#if DEBUG_MENU
-    if (AllowAnyMove) {
-      return new List<(int roll, int point)> {
-        (_die.Rolls[0], 1),  (_die.Rolls[0], 2),  (_die.Rolls[0], 3),  (_die.Rolls[0], 4),
-        (_die.Rolls[0], 5),  (_die.Rolls[0], 6),  (_die.Rolls[0], 6),  (_die.Rolls[0], 8),
-        (_die.Rolls[0], 9),  (_die.Rolls[0], 10), (_die.Rolls[0], 11), (_die.Rolls[0], 12),
-        (_die.Rolls[0], 13), (_die.Rolls[0], 14), (_die.Rolls[0], 15), (_die.Rolls[0], 16),
-        (_die.Rolls[0], 17), (_die.Rolls[0], 18), (_die.Rolls[0], 19), (_die.Rolls[0], 20),
-        (_die.Rolls[0], 21), (_die.Rolls[0], 22), (_die.Rolls[0], 23), (_die.Rolls[0], 24),
-        (_die.Rolls[0], 25), (_die.Rolls[0], 26)
-      };
-    }
-#endif
 
     Logger.Info(
         $"(GameState)PossibleMoves: the following (roll, point) pairs are rolls that the current player can use to move the current piece to target points:\n\t" +
