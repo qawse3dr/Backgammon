@@ -113,6 +113,7 @@ public class TestGameState {
     Piece pc_1 = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
     Piece pc_2 = new GameObject("Piece2", typeof(Piece)).GetComponent<Piece>();
     Piece pc_3 = new GameObject("Piece3", typeof(Piece)).GetComponent<Piece>();
+
     // Init Pieces
     pc_1.Start();
     pc_1.Owner = new Player(PlayerEnum.Player1);
@@ -127,5 +128,52 @@ public class TestGameState {
     Assert.True(gs.MovePiece(pc_1, 5));
     Assert.True(gs.MovePiece(pc_2, 5));
     Assert.False(gs.MovePiece(pc_3, 5));
+  }
+
+  [Test]
+  public void Test_PossibleMoves() {
+    // GameState gs = new GameState();
+    PieceState pieces = GameHandler.Game.Pieces;
+    // Piece pc = new GameObject("Piece1", typeof(Piece)).GetComponent<Piece>();
+    Piece pc = pieces.WhiteBoard[5][0]; // white has piece on points 6, 8, 13 and 24 upon init
+    // (subract 1 for index)
+    List<(int roll, int point)> rollsPlusPoints = GameHandler.Game.PossibleMoves(pc);
+  }
+
+  [Test]
+  public void Test_AddPieceInit() {
+    
+    PieceState pieces = GameHandler.Game.Pieces;
+
+    foreach ( GameObject go in GameObject.FindGameObjectsWithTag("Piece")) {
+      go.GetComponent<Piece>().Start();
+      go.GetComponent<Piece>().Update();
+    }
+
+
+    List<Piece>[] bBoard = pieces.BlackBoard;
+    List<Piece>[] wBoard = pieces.BlackBoard;
+    List<Piece> wBar = pieces.WhiteBar;
+    List<Piece> bBar = pieces.BlackBar;
+    List<Piece> wOff = pieces.WhiteOff;
+    List<Piece> bOff = pieces.BlackOff;
+
+    // check white off and black off are empty
+    Assert.AreEqual(bOff.Count, 0);
+    Assert.AreEqual(wOff.Count, 0);
+    // check there are no pieces on the bar
+    Assert.AreEqual(wBar.Count, 0);
+    Assert.AreEqual(bBar.Count, 0);
+    // check black board
+    Assert.AreEqual(bBoard[5].Count, 5); // 5 black pieces on point 6 (index 5)
+    Assert.AreEqual(bBoard[7].Count, 3);// 3 black pieces on point 8 (index 7)
+    Assert.AreEqual(bBoard[12].Count, 5);// 5 black pieces on point 13 (index 12)
+    Assert.AreEqual(bBoard[23].Count, 2);// 2 black pieces on point 24 (index 23)
+
+    // check white board
+    Assert.AreEqual(wBoard[0].Count, 2); // 2 white pieces on point 1 (index 0)
+    Assert.AreEqual(wBoard[11].Count, 5); // 5 white pieces on point 12 (index 11)
+    Assert.AreEqual(wBoard[16].Count, 3); // 3 white pieces on point 17 (index 16)
+    Assert.AreEqual(wBoard[18].Count, 5); // 5 white pieces on point 19 (index 18)
   }
 }

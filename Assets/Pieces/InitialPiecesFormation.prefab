@@ -1365,6 +1365,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3252365641356650565}
     m_Modifications:
+    - target: {fileID: -3620357414025099787, guid: e80a582b6e1b04b3c8b270a90166b639, type: 3}
+      propertyPath: StartPointIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3620357414025099787, guid: e80a582b6e1b04b3c8b270a90166b639, type: 3}
+      propertyPath: StartVerticality
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 96064019412086283, guid: e80a582b6e1b04b3c8b270a90166b639, type: 3}
       propertyPath: m_Name
       value: PieceAsset
