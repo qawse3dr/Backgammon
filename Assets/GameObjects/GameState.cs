@@ -432,8 +432,9 @@ public class GameState {
     }
 
     // Update Game state
-    if ( result) {
-      Logger.Debug($"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
+    if (result) {
+      Logger.Debug(
+          $"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
       _die.ClearRoll(posMoves[indexOfPoint].roll);
     }
 
@@ -498,8 +499,9 @@ public class GameState {
                      ? _whiteOnBar
                      : _blackOnBar;  // is the given piece on the bar?
     int curPoint = piece.GetPieceStatus().BoardIndex - 1;
-    // these are indices and not point #'s. So when you have a roll of one for for white, you end up at index 0 and for red, a roll of 1 (-1) will get you to index 23.
-    int startPoint = piece.Owner.PlayerNum == PlayerEnum.Player2 ? 24 : -1; 
+    // these are indices and not point #'s. So when you have a roll of one for for white, you end up
+    // at index 0 and for red, a roll of 1 (-1) will get you to index 23.
+    int startPoint = piece.Owner.PlayerNum == PlayerEnum.Player2 ? 24 : -1;
     List<Piece>[] otherPlayer = piece.Owner.PlayerNum == PlayerEnum.Player2
                                     ? _pieces.WhiteBoard
                                     : _pieces.BlackBoard;  // other players' pieces
@@ -522,34 +524,26 @@ public class GameState {
     Logger.Info(
         $"(GameState)PossibleMoves: before removal, the following (roll, point) pairs:\n\t" +
         PossibleMovesToString(rollPlusPoint));
-    foreach ((int roll, int point) rollPoint in rollPlusPoint) {
-      Logger.Debug($"OtherPlayer[{rollPoint.point}]");
-      Logger.Debug($"GAMESTSTSTSTS {ToString()}");
+    foreach ((int roll, int point)rollPoint in rollPlusPoint) {
       // check for any target points outside (0, 23)
       if (rollPoint.point <= -1 || rollPoint.point >= 24) {
         // overwriting given roll+point tuple
-        Logger.Debug($"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as it is out of range. Replacing with (roll, point) - ({rollPoint.roll}, {off})");
+        Logger.Debug(
+            $"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as it is out of range. Replacing with (roll, point) - ({rollPoint.roll}, {off})");
         toRemove.Add(rollPoint);
         if (home) {  // if the current player is eligible to start moving off the board
           toAdd.Add((rollPoint.roll, off));  // off board: 25 (white) or 26 (red)
         }
+        continue;
       }
-      // Remove points marked for remove (out of range).
-      foreach (var rp in toRemove) {
-        rollPlusPoint.Remove(rp);
-      }
-      toRemove.Clear(); // will be used again to remove moves with too many opponent pieces
-      
-      Logger.Info(
-        $"(GameState)PossibleMoves: remaining moves after correcting out of range, the following (roll, point) pairs:\n\t" +
-        PossibleMovesToString(rollPlusPoint));
+
       // remove any moves which have 1+ of the other players' pieces on the target point
       if (otherPlayer[rollPoint.point].Count > 1) {
-        Logger.Debug($"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as there are too many opponent pieces on point");
+        Logger.Debug(
+            $"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as there are too many opponent pieces on point");
         toRemove.Add(rollPoint);
       }
     }
-    Logger.Debug("Here");
     // Remove points marked for remove (too many opponent pieces on point).
     foreach (var rp in toRemove) {
       rollPlusPoint.Remove(rp);
