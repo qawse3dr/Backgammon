@@ -433,6 +433,7 @@ public class GameState {
 
     // Update Game state
     if ( result) {
+      Logger.Debug($"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
       _die.ClearRoll(posMoves[indexOfPoint].roll);
     }
 
@@ -518,12 +519,14 @@ public class GameState {
     }
     foreach ((int roll, int point)rollPoint in rollPlusPoint) {
       // remove any moves which have 1+ of the other players' pieces on the target point
-      if (otherPlayer[rollPoint.roll].Count > 1) {
+      if (otherPlayer[rollPoint.point].Count > 1) {
+        Logger.Debug($"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as there are too many opponent pieces on point");
         toRemove.Add(rollPoint);
       }
       // check for any target points outside (1, 24)
       if (rollPoint.roll < 1 || rollPoint.roll > 24) {
         // overwriting given roll+point tuple
+        Logger.Debug($"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as it is out of range. Replacing with (roll, point) - ({rollPoint.roll}, {off})");
         toRemove.Add(rollPoint);
         if (home) {  // if the current player is eligible to start moving off the board
           toAdd.Add((rollPoint.roll, off));  // off board: 25 (white) or 26 (red)

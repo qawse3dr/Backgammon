@@ -22,7 +22,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   private bool _onBar;
   private bool _inHome;
   private bool _isPickedUp;
-  private bool inited = false;
 
   // Used to reset the piece object if moving it fails
   private Vector2 _previousPostion;
@@ -254,6 +253,8 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     if (GameHandler.Game.IsGameOver()) {
       Logger.Info($"Game is over Player {Owner.ToString()} won");
     }
+
+    Logger.Debug("SUCCESSFUL PIECE MOVE INTO HOME");
     return true;
   }
 
