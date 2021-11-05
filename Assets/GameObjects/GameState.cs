@@ -461,7 +461,7 @@ public class GameState {
   */
   public bool MustPass() {
     foreach (List<Piece> point in _pieces.BlackBoard) {
-      foreach(Piece piece in point){
+      foreach (Piece piece in point) {
         if (PossibleMoves(piece).Count > 0) {
           Logger.Info($"(GameState)MustPass: the current player MUST PASS their turn.\n");
           return true;
@@ -469,7 +469,7 @@ public class GameState {
       }
     }
     foreach (List<Piece> point in _pieces.WhiteBoard) {
-      foreach(Piece piece in point){
+      foreach (Piece piece in point) {
         if (PossibleMoves(piece).Count > 0) {
           Logger.Info($"(GameState)MustPass: the current player MUST PASS their turn.\n");
           return true;
@@ -477,7 +477,8 @@ public class GameState {
       }
     }
     MustPass();
-    Logger.Info($"(GameState)MustPass: it is false that the current player must pass their turn.\n");
+    Logger.Info(
+        $"(GameState)MustPass: it is false that the current player must pass their turn.\n");
     return false;  // default value will not force the player to pass
   }
 
@@ -619,8 +620,6 @@ public class GameState {
 
     _blackOnBar = (_pieces.BlackBar.Count > 0);
     _whiteOnBar = (_pieces.WhiteBar.Count > 0);
-
-
 
     Logger.Info(
         $"Updating game state after (_blackHome={_blackHome}, _whiteHome={_whiteHome}, _whiteOnBar={_whiteOnBar}, _blackOnBar={_blackOnBar}, _GamePhase={_gamePhase}, _playerTurn={_playerTurn})");
