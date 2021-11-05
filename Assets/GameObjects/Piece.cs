@@ -38,6 +38,8 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
   // TODO remove once init is done
   public PlayerEnum StartingOwner;
+  public int StartPointIndex;
+  public int StartVerticality;
 
   public void OnPointerDown(PointerEventData data) {
     if (GameHandler.Game.PlayerTurn == Owner.GetPlayerNum() && !_inHome) {
@@ -116,13 +118,18 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     _inHome = false;
     // Set to one due to having a error when programming drag story
     // As piece Init is not fully done yet
-    _boardIndex = 1;
+    _boardIndex = StartPointIndex;
     _isPickedUp = false;
+
+    if (GameHandler.Game == null) {
+      GameHandler.Game = new GameState();
+    }
+
+    Owner = GameHandler.Game.GetPlayer(StartingOwner);
+    GameHandler.Game.AddPieceInit(this, StartVerticality);
   }
 
   public void Update() {
-    if (Owner == null)
-      Owner = GameHandler.Game.GetPlayer(StartingOwner);
     if (_isPickedUp) {
       // There seems to be a bug where the mousePos.z can't be the same as the mouse or else
       // OnClicks Won't work. So a work around is to just set it to 3.
@@ -246,6 +253,8 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     if (GameHandler.Game.IsGameOver()) {
       Logger.Info($"Game is over Player {Owner.ToString()} won");
     }
+
+    Logger.Debug("SUCCESSFUL PIECE MOVE INTO HOME");
     return true;
   }
 
@@ -280,7 +289,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     boardState.MyBoard[boardIndex - 1].Add(this);
 
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
-      Logger.Info("Overtaking not implemented yet");
+      Logger.Info("Overtaking");
       Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
       boardState.OtherBoard[boardIndex - 1].Remove(otherPiece);
       otherPiece.MoveToBar();
@@ -335,10 +344,17 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   }
 
   public override string ToString() {
+    string str = "";
     string ownerName = "Not Set";
-    if (Owner != null)
-      ownerName = (Owner.PlayerNum == PlayerEnum.Player1) ? "Player1" : "Player2";
+    if (this != null) {
+      if (Owner != null)
+        ownerName = (Owner.PlayerNum == PlayerEnum.Player1) ? "Player1" : "Player2";
+      str =
+          $"Piece Object: (Owner:{ownerName}, OnBar: {_onBar}, boardIndex: {_boardIndex}, InHome: {_inHome}, PickedUp: {_isPickedUp} )";
+    } else {
+      str = $"Piece Object: null";
+    }
 
-    return $"Piece Object: (Owner:{ownerName}, OnBar: {_onBar}, boardIndex: {_boardIndex}, InHome: {_inHome}, PickedUp: {_isPickedUp} )";
+    return str;
   }
 }

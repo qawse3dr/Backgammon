@@ -129,8 +129,11 @@ public struct PieceState {
   private string PiecesToString(List<Piece> ps, string indentOut = "") {
     string pieces = "";
     string indentIn = indentOut + "\t";
-    for (int i = 1; i <= ps.Count; i++) {
-      pieces += indentIn + ps[i].ToString() + "\n";
+    for (int i = 0; i < ps.Count; i++) {
+      if (ps[i])
+        pieces += indentIn + ps[i].ToString() + "\n";
+      else
+        pieces += indentIn + "null" + "\n";
     }
     return pieces;
   }
@@ -177,15 +180,12 @@ public class GameState {
   private
     set { _pieces = value; }
   }
-  private List<int> _roll;
   private Player[] _players;
   private PlayerEnum _playerTurn;
   public PlayerEnum PlayerTurn => _playerTurn;
   private GamePhase _gamePhase;
 
-#if DEBUG_MENU
   public bool AllowAnyMove = false;
-#endif
 
   /*
   Constructor with no arguments.
@@ -221,7 +221,7 @@ public class GameState {
     _playerTurn = InitPlayerTurn();
     // init GamePhase to ROLL since ROLL comes before MOVE
     _gamePhase = GamePhase.ROLL;
-    Logger.Debug($"(GameState)Object: \n" + ToString());
+    // Logger.Debug($"(GameState)Object: \n" + ToString());
   }
 
   /*
@@ -230,15 +230,85 @@ public class GameState {
   */
   private PieceState InitPieceState() {
     Logger.Debug($"(GameState)InitPieceState: pieces initialized");
-    List<Piece>[] bb = new List<Piece>[24];
     List<Piece>[] wb = new List<Piece>[24];
+    List<Piece>[] bb = new List<Piece>[24];
+    List<int> toBeFillBlack = new List<int> { 5, 7, 12, 23 };
+    List<int> toBeFillWhite = new List<int> { 0, 11, 16, 18 };
+    List<int> fillNumBlack = new List<int> { 2, 5, 3, 5 };
+    List<int> fillNumWhite = new List<int> { 5, 3, 5, 2 };
+
     for (int i = 0; i < wb.Length; i++) {
-      bb[i] = new List<Piece>();
       wb[i] = new List<Piece>();
+      bb[i] = new List<Piece>();
+      bb = FillBlackBoard(i, bb);
+      wb = FillWhiteBoard(i, wb);
     }
-    PieceState ps = new PieceState(wb, bb, new List<Piece>(), new List<Piece>(), new List<Piece>(),
+
+    PieceState ps = new PieceState(bb, wb, new List<Piece>(), new List<Piece>(), new List<Piece>(),
                                    new List<Piece>());
     return ps;
+  }
+
+  /*
+  Helper function for InitPieceState. Adds nulls to points lists that will have black pieces in them
+  when the game is initialized.
+  */
+  private List<Piece>[] FillBlackBoard(int i, List<Piece>[] board) {
+    List<int> toBeFill = new List<int> { 5, 7, 12, 23 };
+    List<int> fillNum = new List<int> { 5, 3, 5, 2 };
+
+    if (toBeFill.Contains(i)) {
+      int index = toBeFill.IndexOf(i);
+      for (int j = 0; j < fillNum[index]; j++) {
+        board[i].Add(null);
+      }
+    }
+
+    return board;
+  }
+
+  /*
+ Helper function for InitPieceState. Adds nulls to points lists that will have white pieces in them
+ when the game is initialized.
+ */
+  private List<Piece>[] FillWhiteBoard(int i, List<Piece>[] board) {
+    List<int> toBeFill = new List<int> { 0, 11, 16, 18 };
+    List<int> fillNum = new List<int> { 2, 5, 3, 5 };
+
+    if (toBeFill.Contains(i)) {
+      int index = toBeFill.IndexOf(i);
+      for (int j = 0; j < fillNum[index]; j++) {
+        board[i].Add(null);
+      }
+    }
+
+    return board;
+  }
+
+  /*
+  Called before first frame is loaded from Piece class' start method. Each piece on the board will
+  have this method called on it.
+  Parameters: piece       - the piece object (corresponding to a piece object in the backend and a
+                            piece on the unity board in the frontend)
+              verticality - the pieces are 'stacked' on top of each other on each point. Verticality
+                            defines how high in the stack the given piece is on the point it starts
+                            on.
+  */
+  public void AddPieceInit(Piece piece, int verticality) {
+    Logger.Debug(
+        $"Initializing piece at verticality {verticality} on point {piece.StartPointIndex}");
+
+    if (piece.StartPointIndex < 1 || verticality < 1) {
+      Logger.Error("PIECE INDEX IS TO SMALL");
+      return;
+    }
+    if (piece.Owner.PlayerNum == PlayerEnum.Player1) {
+      List<Piece> point = _pieces.WhiteBoard[piece.StartPointIndex - 1];
+      point[verticality - 1] = piece;
+    } else {
+      List<Piece> point = _pieces.BlackBoard[piece.StartPointIndex - 1];
+      point[verticality - 1] = piece;
+    }
   }
 
   /*
@@ -342,7 +412,18 @@ public class GameState {
       Logger.Warn("Game is over you can't move pieces");
       return false;
     }
-    if (PossibleMoves(piece).Contains(boardIndex)) {
+
+    List<(int roll, int point)> posMoves = null;
+    int indexOfPoint;
+
+    if (AllowAnyMove) {
+      indexOfPoint = boardIndex;
+    } else {
+      posMoves = PossibleMoves(piece);
+      indexOfPoint = posMoves.FindIndex(rp => rp.point == boardIndex - 1);
+    }
+
+    if (indexOfPoint != -1) {
       Logger.Info(
           $"Moving {piece.ToString()}: from {piece.GetPieceStatus().BoardIndex} to {boardIndex}");
 
@@ -352,8 +433,10 @@ public class GameState {
           return false;
         }
         result = piece.MoveIntoHome();
+        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       } else {  // move to board
         result = piece.MoveToBoardIndex(boardIndex);
+        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       }
     } else {
       Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
@@ -361,7 +444,14 @@ public class GameState {
     }
 
     // Update Game state
+    if (result && !AllowAnyMove) {
+      Logger.Debug(
+          $"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
+      _die.ClearRoll(posMoves[indexOfPoint].roll);
+    }
+
     UpdateGameState();
+    Logger.Debug($"(GameState)Object: \n" + ToString());
     return result;
   }
 
@@ -400,20 +490,108 @@ public class GameState {
   Returns an array of point indices of points in which a given piece is eligible to move based on
   the rules of backgammon.
   */
-  public List<int> PossibleMoves(Piece piece) {
-    List<int> moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
-                                      14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
-    string move = "\n" + string.Join(",", moves);
-    Logger.Info(
-        $"(GameState)PossibleMoves: it is {moves} that the current player must pass their turn.\n");
-// for unit testing allow any moves
-#if DEBUG_MENU
+  public List<(int roll, int point)> PossibleMoves(Piece piece) {
+    // for unit testing allow any moves
     if (AllowAnyMove) {
-      moves = new List<int> { 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
-                              14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+      Logger.Debug("ALlowAnyMove");
+      return new List<(int roll, int point)> {
+        (_die.Rolls[0], 1),  (_die.Rolls[0], 2),  (_die.Rolls[0], 3),  (_die.Rolls[0], 4),
+        (_die.Rolls[0], 5),  (_die.Rolls[0], 6),  (_die.Rolls[0], 6),  (_die.Rolls[0], 8),
+        (_die.Rolls[0], 9),  (_die.Rolls[0], 10), (_die.Rolls[0], 11), (_die.Rolls[0], 12),
+        (_die.Rolls[0], 13), (_die.Rolls[0], 14), (_die.Rolls[0], 15), (_die.Rolls[0], 16),
+        (_die.Rolls[0], 17), (_die.Rolls[0], 18), (_die.Rolls[0], 19), (_die.Rolls[0], 20),
+        (_die.Rolls[0], 21), (_die.Rolls[0], 22), (_die.Rolls[0], 23), (_die.Rolls[0], 24),
+        (_die.Rolls[0], 25), (_die.Rolls[0], 26)
+      };
     }
-#endif
-    return moves;  // default value for now
+
+    List<(int roll, int point)> rollPlusPoint = new List<(
+        int roll, int point)> {};  // return roll as well as point so that when move is made,
+                                   // ClearRoll(roll) can be used to remove the corresponding roll
+    List<(int roll, int point)> toAdd =
+        new List<(int roll, int point)> {};  // used to overwrite values in rollPlusPoint when
+                                             // checking for out of range points below
+    // Points to remove
+    List<(int roll, int point)> toRemove = new List<(int roll, int point)>();
+    int dir = piece.Owner.PlayerNum == PlayerEnum.Player2
+                  ? -1
+                  : 1;  // white pieces move around board in one direction and black pieces in the
+                        // other direction
+    int off = piece.Owner.PlayerNum == PlayerEnum.Player1
+                  ? 25
+                  : 26;  // values to indicate a piece is being moved from home to off board (near
+                         // end of game)
+    bool onBar = piece.Owner.PlayerNum == PlayerEnum.Player1
+                     ? _whiteOnBar
+                     : _blackOnBar;  // is the given piece on the bar?
+    int curPoint = piece.GetPieceStatus().BoardIndex - 1;
+    // these are indices and not point #'s. So when you have a roll of one for for white, you end up
+    // at index 0 and for red, a roll of 1 (-1) will get you to index 23.
+    int startPoint = piece.Owner.PlayerNum == PlayerEnum.Player2 ? 24 : -1;
+    List<Piece>[] otherPlayer = piece.Owner.PlayerNum == PlayerEnum.Player2
+                                    ? _pieces.WhiteBoard
+                                    : _pieces.BlackBoard;  // other players' pieces
+    bool home = piece.Owner.PlayerNum == PlayerEnum.Player1 ? _whiteHome : _blackHome;
+    // if the user has a piece on the bar
+    if (onBar) {
+      // if the given piece is on the bar
+      if (piece.GetPieceStatus().PieceLocation == PieceStatus.PieceLocationEnum.OnBar) {
+        foreach (int r in _die.Rolls) {
+          rollPlusPoint.Add(
+              (r, startPoint + dir * r));  // newPoint = startPoint + (direction) * roll
+        }
+      }
+    } else {
+      foreach (int r in _die.Rolls) {
+        rollPlusPoint.Add((r, curPoint + dir * r));  // newPoint = curPoint + (direction) * roll
+      }
+    }
+
+    Logger.Info(
+        $"(GameState)PossibleMoves: before removal, the following (roll, point) pairs:\n\t" +
+        PossibleMovesToString(rollPlusPoint));
+    foreach ((int roll, int point)rollPoint in rollPlusPoint) {
+      // check for any target points outside (0, 23)
+      if (rollPoint.point <= -1 || rollPoint.point >= 24) {
+        // overwriting given roll+point tuple
+        Logger.Debug(
+            $"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as it is out of range. Replacing with (roll, point) - ({rollPoint.roll}, {off})");
+        toRemove.Add(rollPoint);
+        if (home) {  // if the current player is eligible to start moving off the board
+          toAdd.Add((rollPoint.roll, off));  // off board: 25 (white) or 26 (red)
+        }
+        continue;
+      }
+
+      // remove any moves which have 1+ of the other players' pieces on the target point
+      if (otherPlayer[rollPoint.point].Count > 1) {
+        Logger.Debug(
+            $"Removing (roll, point) - ({rollPoint.roll}, {rollPoint.point}) from possible moves as there are too many opponent pieces on point");
+        toRemove.Add(rollPoint);
+      }
+    }
+    // Remove points marked for remove (too many opponent pieces on point).
+    foreach (var rp in toRemove) {
+      rollPlusPoint.Remove(rp);
+    }
+    rollPlusPoint.AddRange(toAdd);  // replacements for out of range points
+
+    Logger.Info(
+        $"(GameState)PossibleMoves: the following (roll, point) pairs are rolls that the current player can use to move the current piece to target points:\n\t" +
+        PossibleMovesToString(rollPlusPoint));
+    return rollPlusPoint;  // default value for now
+  }
+
+  /*
+  Helper function for log message for PossibleMoves function
+  */
+  public string PossibleMovesToString(List<(int roll, int point)> rollsPlusPoints) {
+    string str = "";
+    foreach ((int roll, int point)rollPoint in rollsPlusPoints) {
+      str += "(" + rollPoint.roll + ", " + rollPoint.point + "), ";
+    }
+    str.TrimEnd(' ', ',');
+    return str;
   }
 
   public void UpdateGameState() {
@@ -500,6 +678,7 @@ public class GameState {
     if (piece == null) {  // Drop piece
       _pieces.PieceInHand = null;
       // Todo check if piece can be dropped.
+      Logger.Warn("Piece is set to null");
       return true;
     } else if (_pieces.PieceInHand != null) {  // Failed
       Logger.Info("Piece already held", "PIECE");
@@ -557,6 +736,7 @@ public class GameState {
       return _players[1];
     }
   }
+
   /*
   Helper method for ToString method. Creates a string to describe the _players attribute of the
   GameState instance.
@@ -575,6 +755,7 @@ public class GameState {
     GameObject die1 = GameObject.Find("Die1");
     GameObject die2 = GameObject.Find("Die2");
     _die.Roll();
+    _gamePhase = GamePhase.MOVE;
 
     foreach ((GameObject go, int index)go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
       switch (_die.Rolls[go.index]) {
