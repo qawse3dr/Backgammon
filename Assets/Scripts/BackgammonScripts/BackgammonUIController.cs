@@ -69,7 +69,9 @@ public class BackgammonUIController : MonoBehaviour {
   }
   public void RollDice() {
     Logger.Debug("Rolling dice");
-    GameHandler.Game.RollDice(this);
+    Logger.Debug("Setting roll UI to false");
     GameObject.Find("Roll").GetComponent<Text>().enabled = false;
+    Logger.Debug("Rolling dice");
+    GameHandler.Game.RollDice(this);
   }
 }

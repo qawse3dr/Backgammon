@@ -57,7 +57,7 @@ public class DebugMenu : MonoBehaviour {
       _turn = turn;
     }
     GamePhase gamePhase = GameHandler.Game.GetTurnPhase();
-    if (_gamePhase == gamePhase) {
+    if (_gamePhase != gamePhase) {
       if (gamePhase == GamePhase.MOVE) {
         _stateObj.GetComponent<Text>().text = "State: Move";
       } else {
@@ -66,7 +66,7 @@ public class DebugMenu : MonoBehaviour {
       _gamePhase = gamePhase;
     }
     bool whiteHome = GameHandler.Game.GetWhiteHome();
-    if (_whiteHome == whiteHome) {
+    if (_whiteHome != whiteHome) {
       if (whiteHome == true) {
         _whiteHomeObj.GetComponent<Text>().text = "WhiteHome: 1";
       } else {
@@ -75,7 +75,7 @@ public class DebugMenu : MonoBehaviour {
       _whiteHome = whiteHome;
     }
     bool blackHome = GameHandler.Game.GetBlackHome();
-    if (_blackHome == blackHome) {
+    if (_blackHome != blackHome) {
       if (blackHome == true) {
         _blackHomeObj.GetComponent<Text>().text = "BlackHome: 1";
       } else {
@@ -85,17 +85,17 @@ public class DebugMenu : MonoBehaviour {
     }
 
     bool whiteOnBar = GameHandler.Game.GetWhiteOnBar();
-    if (_whiteOnBar == whiteOnBar) {
+    if (_whiteOnBar != whiteOnBar) {
       if (whiteOnBar == true) {
         _whiteOnBarObj.GetComponent<Text>().text = "WhtOnBar: 1";
       } else {
-        _blackHomeObj.GetComponent<Text>().text = "WhtOnBar: 0";
+        _whiteOnBarObj.GetComponent<Text>().text = "WhtOnBar: 0";
       }
       _blackHome = whiteOnBar;
     }
 
     bool blackOnBar = GameHandler.Game.GetBlackOnBar();
-    if (_blackHome == blackOnBar) {
+    if (_blackHome != blackOnBar) {
       if (blackOnBar == true) {
         _blackOnBarObj.GetComponent<Text>().text = "BlkOnBar: 1";
       } else {

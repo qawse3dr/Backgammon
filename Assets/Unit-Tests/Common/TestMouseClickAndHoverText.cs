@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.TestTools;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-
 public class TestMouseClickAndHoverText {
   private Text _textElement;
   private GameObject _object;
