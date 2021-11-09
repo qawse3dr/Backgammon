@@ -420,7 +420,9 @@ public class GameState {
       indexOfPoint = boardIndex;
     } else {
       posMoves = PossibleMoves(piece);
-      indexOfPoint = posMoves.FindIndex(rp => rp.point == boardIndex - 1);
+      // BUG FIX #57 to account for the board index locations
+      int tempIndex = (boardIndex != 25 && boardIndex != 26) ? boardIndex - 1 : boardIndex;
+      indexOfPoint = posMoves.FindIndex(rp => rp.point == tempIndex);
     }
 
     if (indexOfPoint != -1) {
@@ -433,24 +435,29 @@ public class GameState {
           return false;
         }
         result = piece.MoveIntoHome();
-        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       } else {  // move to board
         result = piece.MoveToBoardIndex(boardIndex);
-        // _die.ClearRoll(posMoves[indexOfPoint].roll);
       }
     } else {
       Logger.Warn($"MovePiece: Invalid Move to {boardIndex}");
       return false;
     }
 
-    // Update Game state
+    // Remove the roll if move passed
     if (result && !AllowAnyMove) {
       Logger.Debug(
           $"(GameState)MovePiece: Successful move using roll - {posMoves[indexOfPoint].roll}");
+
+      // Update Game state
+      UpdateGameState();
+
       _die.ClearRoll(posMoves[indexOfPoint].roll);
+      if (_die.Rolls.Count > 0 && MustPass()) {
+        Logger.Debug("Changing turn after one dice roll");
+        ChangeCurrentPlayer();
+      }
     }
 
-    UpdateGameState();
     Logger.Debug($"(GameState)Object: \n" + ToString());
     return result;
   }
@@ -460,26 +467,23 @@ public class GameState {
   rolls they have.
   */
   public bool MustPass() {
-    foreach (List<Piece> point in _pieces.BlackBoard) {
+    foreach (List<Piece> point in GetBoardState().MyBoard) {
       foreach (Piece piece in point) {
         if (PossibleMoves(piece).Count > 0) {
-          Logger.Info($"(GameState)MustPass: the current player MUST PASS their turn.\n");
-          return true;
+          Logger.Info($"(GameState)MustPass: the current player can play their turn.\n");
+          return false;
         }
       }
     }
-    foreach (List<Piece> point in _pieces.WhiteBoard) {
-      foreach (Piece piece in point) {
-        if (PossibleMoves(piece).Count > 0) {
-          Logger.Info($"(GameState)MustPass: the current player MUST PASS their turn.\n");
-          return true;
-        }
+    foreach (Piece piece in GetBoardState().MyBar) {
+      if (PossibleMoves(piece).Count > 0) {
+        Logger.Info($"(GameState)MustPass: the current player can play their turn.\n");
+        return false;
       }
     }
-    MustPass();
     Logger.Info(
         $"(GameState)MustPass: it is false that the current player must pass their turn.\n");
-    return false;  // default value will not force the player to pass
+    return true;  // default value will not force the player to pass
   }
 
   /*
@@ -659,6 +663,7 @@ public class GameState {
     _die = new Die(
         2, new List<int> { DateTime.Now.Millisecond, DateTime.Now.Millisecond + 1 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
+    Logger.Debug("Enableing roll text");
     GameObject.Find("Roll").GetComponent<Text>().enabled = true;
 
     // Change PlayerIcon prefab colours according to current player
@@ -795,6 +800,11 @@ public class GameState {
           go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die6;
           break;
       }
+    }
+
+    if (MustPass()) {
+      Logger.Info("Player cannot move passing turn");
+      ChangeCurrentPlayer();
     }
   }
 

@@ -23,6 +23,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeTurn(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
     Text text = obj.GetComponent<Text>();
     if (text.text == "Turn: Player 1") {
       text.text = "Turn: Player 2";
@@ -34,6 +35,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       OnClickChangeTurnState(turnState);
     }
     GameHandler.Game.ChangeCurrentPlayer();
+#endif
   }
 
   /**
@@ -43,6 +45,8 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeTurnState(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
+
     GamePhase phase;
     Text text = obj.GetComponent<Text>();
     if (text.text == "State: Roll") {
@@ -53,6 +57,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       phase = GamePhase.ROLL;
     }
     GameHandler.Game.ChangeState(phase);
+#endif
   }
 
   /**
@@ -62,6 +67,8 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeWhiteHome(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
+
     bool isHome;
     Text text = obj.GetComponent<Text>();
     if (text.text == "WhiteHome: 0") {
@@ -72,6 +79,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       isHome = false;
     }
     GameHandler.Game.ChangeWhiteHome(isHome);
+#endif
   }
 
   /**
@@ -81,6 +89,8 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeBlackHome(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
+
     bool isHome;
     Text text = obj.GetComponent<Text>();
     if (text.text == "BlackHome: 0") {
@@ -91,6 +101,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       isHome = false;
     }
     GameHandler.Game.ChangeBlackHome(isHome);
+#endif
   }
 
   /**
@@ -100,6 +111,8 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeWhiteOnBar(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
+
     bool onBar;
     Text text = obj.GetComponent<Text>();
     if (text.text == "WhtOnBar: 0") {
@@ -110,6 +123,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       onBar = false;
     }
     GameHandler.Game.ChangeWhiteOnBar(onBar);
+#endif
   }
 
   /**
@@ -119,6 +133,7 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
   public void OnClickChangeBlackOnBar(GameObject obj) {
     if (!debugMenu_.DebugMenuActive)
       return;
+#if DEBUG_MENU
     bool onBar;
     Text text = obj.GetComponent<Text>();
     if (text.text == "BlkOnBar: 0") {
@@ -129,5 +144,6 @@ public class DebugMenuOnClickHandler : MonoBehaviour {
       onBar = false;
     }
     GameHandler.Game.ChangeBlackOnBar(onBar);
+#endif
   }
 }
