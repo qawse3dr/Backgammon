@@ -55,11 +55,8 @@ public class BackgammonUIController : MonoBehaviour {
   }
 
   public void GameOver(Player player) {
-    if (player.PlayerNum == PlayerEnum.Player1) {
-      winner.text = "Player 1 won";
-    } else if (player.PlayerNum == PlayerEnum.Player2) {
-      winner.text = "Player 2 won";
-    }
+    winner.text = $"Player {player.Name} won";
+
     image.enabled = true;
     text.enabled = true;
     mainMenu.enabled = true;
