@@ -60,27 +60,27 @@ public class TestPlayer {
 
   [Test]
   public void Test_MatchRecordToString() {
-    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel, Larry, Larry)");
-    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel, Larry, Rachel)");
-    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel, Numan, Numan)");
+    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel,Larry,Larry)");
+    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel,Larry,Rachel)");
+    Assert.AreEqual(_rachelMatchHistory.Dequeue().ToString(), "(Rachel,Numan,Numan)");
 
-    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry, Numan, Numan)");
-    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry, Rachel, Rachel)");
-    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry, Ajit, Larry)");
-    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry, Rachel, Larry)");
-    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry, Numan, Larry)");
+    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry,Numan,Numan)");
+    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry,Rachel,Rachel)");
+    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry,Ajit,Larry)");
+    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry,Rachel,Larry)");
+    Assert.AreEqual(_larryMatchHistory.Dequeue().ToString(), "(Larry,Numan,Larry)");
 
-    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan, Larry, Numan)");
-    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan, Rachel, Numan)");
-    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan, Ajit, Numan)");
-    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan, Rachel, Numan)");
-    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan, Ajit, Ajit)");
+    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan,Larry,Numan)");
+    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan,Rachel,Numan)");
+    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan,Ajit,Numan)");
+    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan,Rachel,Numan)");
+    Assert.AreEqual(_numanMatchHistory.Dequeue().ToString(), "(Numan,Ajit,Ajit)");
 
-    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit, Larry, Ajit)");
-    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit, Rachel, Ajit)");
-    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit, Rachel, Ajit)");
-    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit, Numan, Numan)");
-    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit, Numan, Numan)");
+    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit,Larry,Ajit)");
+    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit,Rachel,Ajit)");
+    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit,Rachel,Ajit)");
+    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit,Numan,Numan)");
+    Assert.AreEqual(_ajitMatchHistory.Dequeue().ToString(), "(Ajit,Numan,Numan)");
   }
 
   // Tests player to string this will be used for the database so formating is very important
@@ -88,73 +88,70 @@ public class TestPlayer {
   public void Test_PlayerToString() {
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,3,(Larry, Numan, Numan),(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry)");
+        "Larry,5,3,(Larry,Numan,Numan),(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry)");
     Assert.AreEqual(
         _playerNuman.ToString(),
-        "Numan,4,20,(Numan, Larry, Numan),(Numan, Rachel, Numan),(Numan, Ajit, Numan),(Numan, Rachel, Numan),(Numan, Ajit, Ajit)");
+        "Numan,4,20,(Numan,Larry,Numan),(Numan,Rachel,Numan),(Numan,Ajit,Numan),(Numan,Rachel,Numan),(Numan,Ajit,Ajit)");
     Assert.AreEqual(
         _playerAjit.ToString(),
-        "Ajit,6,9,(Ajit, Larry, Ajit),(Ajit, Rachel, Ajit),(Ajit, Rachel, Ajit),(Ajit, Numan, Numan),(Ajit, Numan, Numan)");
-    Assert.AreEqual(
-        _playerRachel.ToString(),
-        "Rachel,1,2,(Rachel, Larry, Larry),(Rachel, Larry, Rachel),(Rachel, Numan, Numan)");
+        "Ajit,6,9,(Ajit,Larry,Ajit),(Ajit,Rachel,Ajit),(Ajit,Rachel,Ajit),(Ajit,Numan,Numan),(Ajit,Numan,Numan)");
+    Assert.AreEqual(_playerRachel.ToString(),
+                    "Rachel,1,2,(Rachel,Larry,Larry),(Rachel,Larry,Rachel),(Rachel,Numan,Numan)");
   }
 
   [Test]
   public void Test_SimpleAddMatchWin() {
-    Assert.AreEqual(
-        _playerRachel.ToString(),
-        "Rachel,1,2,(Rachel, Larry, Larry),(Rachel, Larry, Rachel),(Rachel, Numan, Numan)");
+    Assert.AreEqual(_playerRachel.ToString(),
+                    "Rachel,1,2,(Rachel,Larry,Larry),(Rachel,Larry,Rachel),(Rachel,Numan,Numan)");
     _playerRachel.AddMatchHistory(new MatchRecord(_playerRachel, _playerLarry, _playerRachel));
     Assert.AreEqual(
         _playerRachel.ToString(),
-        "Rachel,2,2,(Rachel, Larry, Larry),(Rachel, Larry, Rachel),(Rachel, Numan, Numan),(Rachel, Larry, Rachel)");
+        "Rachel,2,2,(Rachel,Larry,Larry),(Rachel,Larry,Rachel),(Rachel,Numan,Numan),(Rachel,Larry,Rachel)");
   }
 
   [Test]
   public void Test_SimpleAddMatchLose() {
-    Assert.AreEqual(
-        _playerRachel.ToString(),
-        "Rachel,1,2,(Rachel, Larry, Larry),(Rachel, Larry, Rachel),(Rachel, Numan, Numan)");
+    Assert.AreEqual(_playerRachel.ToString(),
+                    "Rachel,1,2,(Rachel,Larry,Larry),(Rachel,Larry,Rachel),(Rachel,Numan,Numan)");
     _playerRachel.AddMatchHistory(new MatchRecord(_playerRachel, _playerLarry, _playerLarry));
     Assert.AreEqual(
         _playerRachel.ToString(),
-        "Rachel,1,3,(Rachel, Larry, Larry),(Rachel, Larry, Rachel),(Rachel, Numan, Numan),(Rachel, Larry, Larry)");
+        "Rachel,1,3,(Rachel,Larry,Larry),(Rachel,Larry,Rachel),(Rachel,Numan,Numan),(Rachel,Larry,Larry)");
   }
   [Test]
   public void Test_AddMatchWithFullQueueWin() {
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,3,(Larry, Numan, Numan),(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry)");
+        "Larry,5,3,(Larry,Numan,Numan),(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry)");
 
     _playerLarry.AddMatchHistory(new MatchRecord(_playerRachel, _playerLarry, _playerLarry));
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,6,3,(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry),(Rachel, Larry, Larry)");
+        "Larry,6,3,(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry),(Rachel,Larry,Larry)");
   }
   [Test]
   public void Test_AddMatchWithFullQueueLose() {
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,3,(Larry, Numan, Numan),(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry)");
+        "Larry,5,3,(Larry,Numan,Numan),(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry)");
     _playerLarry.AddMatchHistory(new MatchRecord(_playerRachel, _playerLarry, _playerRachel));
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,4,(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry),(Rachel, Larry, Rachel)");
+        "Larry,5,4,(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry),(Rachel,Larry,Rachel)");
   }
 
   [Test]
   public void Test_AddMatchBadRecord() {
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,3,(Larry, Numan, Numan),(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry)");
+        "Larry,5,3,(Larry,Numan,Numan),(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry)");
     Assert.False(_playerLarry.AddMatchHistory(new MatchRecord(_playerRachel, _playerLarry, null)));
   }
   [Test]
   public void Test_AddMatchBadPlayerInRecord() {
     Assert.AreEqual(
         _playerLarry.ToString(),
-        "Larry,5,3,(Larry, Numan, Numan),(Larry, Rachel, Rachel),(Larry, Ajit, Larry),(Larry, Rachel, Larry),(Larry, Numan, Larry)");
+        "Larry,5,3,(Larry,Numan,Numan),(Larry,Rachel,Rachel),(Larry,Ajit,Larry),(Larry,Rachel,Larry),(Larry,Numan,Larry)");
     Assert.False(
         _playerLarry.AddMatchHistory(new MatchRecord(_unInitPlayer, _playerLarry, _playerLarry)));
   }
