@@ -319,9 +319,24 @@ public class GameState {
   private Player[] InitPlayers() {
     Logger.Debug($"(GameState)InitPlayers: players initialized");
     Player[] p = new Player[2];
-    p[0] = new Player(PlayerEnum.Player1);
-    p[1] = new Player(PlayerEnum.Player2);
+    p[0] = Player.CreateNewPlayer("Larry and Numan", PlayerEnum.Player1);
+    p[1] = Player.CreateNewPlayer("Rachel and Ajit", PlayerEnum.Player2);
+
     return p;
+  }
+
+  // This should be called once when the game starts
+  public void OnGameStart() {
+    GameObject.Find("PlayerName1")
+        .transform.Find("Name")
+        .GetComponent<Text>()
+        .GetComponent<Text>()
+        .text = _players[0].Name;
+    GameObject.Find("PlayerName2")
+        .transform.Find("Name")
+        .GetComponent<Text>()
+        .GetComponent<Text>()
+        .text = _players[1].Name;
   }
 
   /*
