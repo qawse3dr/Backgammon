@@ -52,3 +52,15 @@ TagManager:
   - name: GameOver
     uniqueID: 2323450029
     locked: 0
+  - name: Background
+    uniqueID: 2833886941
+    locked: 0
+  - name: Foreground
+    uniqueID: 2948544975
+    locked: 0
+  - name: Grey
+    uniqueID: 62032711
+    locked: 0
+  - name: Dropdown
+    uniqueID: 3295616671
+    locked: 0
