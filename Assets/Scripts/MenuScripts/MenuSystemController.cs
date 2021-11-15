@@ -20,4 +20,9 @@ public class MenuSystemController : MonoBehaviour {
     Logger.Info("Exiting Game...");
     Application.Quit();
   }
+
+  public void StatsPageOnClick() {
+    Logger.Info("Redirecting to stats page...");
+    SceneManager.LoadScene("StatsScene");
+  }
 }
