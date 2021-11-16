@@ -23,11 +23,9 @@ public class MenuSystemController : MonoBehaviour {
 
   public void EditProfilesOnClick() {
     Logger.Info("Opening Edit Profiles Page...");
-    
   }
 
   public void StatsOnClick() {
     Logger.Info("Opening Stats Page...");
-    
   }
 }
