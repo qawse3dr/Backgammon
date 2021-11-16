@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,4 +72,5 @@ public class BackgammonUIController : MonoBehaviour {
     Logger.Debug("Rolling dice");
     GameHandler.Game.RollDice(this);
   }
+
 }

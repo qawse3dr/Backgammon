@@ -20,4 +20,14 @@ public class MenuSystemController : MonoBehaviour {
     Logger.Info("Exiting Game...");
     Application.Quit();
   }
+
+  public void EditProfilesOnClick() {
+    Logger.Info("Opening Edit Profiles Page...");
+    
+  }
+
+  public void StatsOnClick() {
+    Logger.Info("Opening Stats Page...");
+    
+  }
 }
