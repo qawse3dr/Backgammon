@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Logger = LNAR.Logger;
 /**
@@ -8,20 +10,20 @@ using Logger = LNAR.Logger;
 public enum PlayerEnum { Player1, Player2, NotSet }
 
 public struct MatchRecord {
-  public Player Player;
-  public Player Opponent;
-  public Player Winner;
+  public string Player;
+  public string Opponent;
+  public string Winner;
 
   public MatchRecord(Player player, Player opponent, Player winner) {
-    this.Player = player;
-    this.Opponent = opponent;
-    this.Winner = winner;
+    this.Player = (player == null) ? null : player.Name;
+    this.Opponent = (opponent == null) ? null : opponent.Name;
+    this.Winner = (winner == null) ? null : winner.Name;
   }
   /** Used to Write to the textfile
    * The string is ordered (Player, Opponent, Winner)
    */
   public override string ToString() {
-    return $"({Player.Name}, {Opponent.Name}, {Winner.Name})";
+    return $"({Player},{Opponent},{Winner})";
   }
 }
 
@@ -96,14 +98,12 @@ public class Player {
     if (record.Player == null || record.Opponent == null || record.Winner == null) {
       Logger.Info($"Invalid match record");
       matchAdded = false;
-    } else if (record.Player.Name == null || record.Player.Wins == -1 ||
-               record.Player.Losses == -1 || record.Opponent.Name == null ||
-               record.Opponent.Wins == -1 || record.Opponent.Losses == -1) {
+    } else if (record.Player == null || record.Opponent == null) {
       Logger.Info($"Player objects aren't fully init'd");
       matchAdded = false;
     } else {  // No errors
       // only edit my match history other players will worry about their match history
-      if (record.Winner == this) {
+      if (record.Winner == this.Name) {
         this.Wins++;
       } else {
         this.Losses++;
@@ -148,5 +148,43 @@ public class Player {
   // Only used for unit tests
   public void SetMatchHistoryUnitTest(Queue<MatchRecord> history) {
     this._matchHistory = history;
+  }
+  public static explicit operator Player(string s) {
+    string[] playerString = s.Split(',');
+
+    Player player = new Player(playerString[0], PlayerEnum.NotSet);
+
+    player.Wins = Int16.Parse(playerString[1]);
+    player.Losses = Int16.Parse(playerString[2]);
+
+    player._matchHistory = new Queue<MatchRecord>();
+    for (int i = 3; i < playerString.Length; i += 3) {
+      MatchRecord record = new MatchRecord();
+      record.Player = playerString[i].Substring(1);
+      record.Opponent = playerString[i + 1];
+      record.Winner = playerString[i + 2].Substring(0, playerString[i + 2].Length - 1);
+      player._matchHistory.Enqueue(record);
+    }
+
+    return player;
+  }
+  public static bool operator ==(Player a, Player b) {
+    if (a is null && b is null) {
+      return true;
+    } else if (!(a is null) && !(b is null)) {
+      return a.Name == b.Name;
+    } else {
+      return false;
+    }
+  }
+
+  public static bool operator !=(Player a, Player b) {
+    if (a is null && b is null) {
+      return false;
+    } else if (!(a is null) && !(b is null)) {
+      return a.Name != b.Name;
+    } else {
+      return true;
+    }
   }
 }
