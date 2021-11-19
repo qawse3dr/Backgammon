@@ -290,9 +290,12 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
       Logger.Info("Overtaking");
+      GameHandler.Game.PlaySound(SoundEffectsEnum.CapturePiece);
       Piece otherPiece = boardState.OtherBoard[boardIndex - 1][0];
       boardState.OtherBoard[boardIndex - 1].Remove(otherPiece);
       otherPiece.MoveToBar();
+    } else {
+      GameHandler.Game.PlaySound(SoundEffectsEnum.PlacePiece);
     }
 
     /////////// Update sprite pos //////////////

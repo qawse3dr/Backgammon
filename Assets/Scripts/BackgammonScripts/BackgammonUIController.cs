@@ -66,6 +66,8 @@ public class BackgammonUIController : MonoBehaviour {
     panelBorder.enabled = true;
   }
   public void RollDice() {
+    GameHandler.Game.PlaySound(SoundEffectsEnum.DiceRoll);
+
     Logger.Debug("Rolling dice");
     Logger.Debug("Setting roll UI to false");
     GameObject.Find("Roll").GetComponent<Text>().enabled = false;
