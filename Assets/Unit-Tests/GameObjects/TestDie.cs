@@ -10,7 +10,7 @@ public class TestDie {
   [UnitySetUp]
   public IEnumerator Setup() {
     SceneManager.LoadScene("Backgammon");
-    GameHandler.Game = new GameState();
+    GameHandler.Game = TestUtil.CreateGameState();
     yield return new WaitForSeconds(1);
   }
 

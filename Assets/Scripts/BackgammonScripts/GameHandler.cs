@@ -13,9 +13,6 @@ public class GameHandler : MonoBehaviour {
     if (Game == null)
       Game = new GameState();
   }
-  public void Awake() {
-    Game = null;
-  }
 
   // Update is called once per frame
   void Update() {

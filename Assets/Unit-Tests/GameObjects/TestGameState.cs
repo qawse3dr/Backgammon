@@ -9,7 +9,7 @@ using Logger = LNAR.Logger;
 public class TestGameState {
   [UnitySetUp]
   public IEnumerator Setup() {
-    GameHandler.Game = new GameState();
+    GameHandler.Game = TestUtil.CreateGameState();
     SceneManager.LoadScene("Backgammon");
     yield return new WaitForSeconds(3);
   }

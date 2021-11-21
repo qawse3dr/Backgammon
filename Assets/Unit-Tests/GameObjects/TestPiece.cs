@@ -18,7 +18,7 @@ public class TestPiece {
   [UnitySetUp]
   public IEnumerator SetUp() {
     Logger.Debug("IN SETUP");
-    GameHandler.Game = new GameState();
+    GameHandler.Game = TestUtil.CreateGameState();
     SceneManager.LoadScene("Backgammon");
     yield return new WaitForSeconds(3);
     foreach (GameObject go in GameObject.FindGameObjectsWithTag("Piece")) {

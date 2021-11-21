@@ -10,10 +10,12 @@ using Logger = LNAR.Logger;
  *   Changing Scene functionality
  */
 public class MenuSystemController : MonoBehaviour {
+  void Start() {
+    Database.DB_PATH = "stats.db";
+  }
   public void StartGameOnClick() {
     Logger.Info("Starting Game Scene...");
-    SceneManager.LoadScene("Backgammon");
-    GameHandler.Game.InitBoardState();
+    SceneManager.LoadScene("SelectPlayer");
   }
 
   public void QuitGameOnClick() {

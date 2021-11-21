@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Backgammon.unity
     guid: 0350b2cdce292c0acafdf88ceea857af
+  - enabled: 1
+    path: Assets/Scenes/SelectPlayer.unity
+    guid: ce4976a6073663dbda26dbad47e6ea1f
   m_configObjects: {}

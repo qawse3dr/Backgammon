@@ -31,8 +31,8 @@ public class TestMainMenu {
     yield return new WaitForSeconds(1);
 
     // Test to see if Scene was changed
-    Assert.AreEqual(SceneManager.GetActiveScene().name,
-                    SceneManager.GetSceneByName("Backgammon").name);
+    Assert.AreNotEqual(SceneManager.GetActiveScene().name,
+                       SceneManager.GetSceneByName("MainMenu").name);
   }
 
   /** Application can't actually quit so just make sure this doesn't crash */

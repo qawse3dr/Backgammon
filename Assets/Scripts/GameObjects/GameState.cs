@@ -194,7 +194,8 @@ public class GameState {
   */
   public GameState() {
     Logger.Debug("(GameState)Constructor called");
-    InitBoardState();
+    InitBoardState(Player.CreateNewPlayer("Player1", PlayerEnum.Player1),
+                   Player.CreateNewPlayer("Player2", PlayerEnum.Player2));
   }
 
   /*
@@ -202,7 +203,7 @@ public class GameState {
   variables of the class including _pieces which creates piece objects for all 30 pieces and
   organizes them into their correct location groupings withint the PieceState struct.
   */
-  public void InitBoardState() {
+  public void InitBoardState(Player player1, Player player2) {
     Logger.Debug($"(GameState)InitBoardState: game and board initialized");
     // no pieces start off on the bar
     _blackOnBar = false;
@@ -216,7 +217,7 @@ public class GameState {
     _die = new Die(
         2, new List<int> { DateTime.Now.Millisecond, DateTime.Now.Millisecond + 1 });  // 2 Dice
     // get players playing the game currently
-    _players = InitPlayers();
+    _players = InitPlayers(player1, player2);
     // assign one of these players (whichever is Player #1) to start the game
     _playerTurn = InitPlayerTurn();
     // init GamePhase to ROLL since ROLL comes before MOVE
@@ -316,12 +317,13 @@ public class GameState {
   their respective player objects and sets one to be "Player #1" and another to be "Player #2". Also
   initializes _playersTurn to the Player object of these 2 that is labeled "Player #1".
   */
-  private Player[] InitPlayers() {
+  private Player[] InitPlayers(Player player1, Player player2) {
     Logger.Debug($"(GameState)InitPlayers: players initialized");
     Player[] p = new Player[2];
-    p[0] = Player.CreateNewPlayer("Larry and Numan", PlayerEnum.Player1);
-    p[1] = Player.CreateNewPlayer("Rachel and Ajit", PlayerEnum.Player2);
-
+    p[0] = player1;
+    p[1] = player2;
+    p[0].PlayerNum = PlayerEnum.Player1;
+    p[1].PlayerNum = PlayerEnum.Player2;
     return p;
   }
 
@@ -449,6 +451,7 @@ public class GameState {
           Logger.Info("Not your home get out");
           return false;
         }
+        PlaySound(SoundEffectsEnum.PlacePiece);
         result = piece.MoveIntoHome();
       } else {  // move to board
         result = piece.MoveToBoardIndex(boardIndex);
@@ -512,10 +515,21 @@ public class GameState {
 
     if (_pieces.WhiteOff.Count == 15) {
       controller.GameOver(_players[0]);
+      _players[0].AddMatchHistory(new MatchRecord(_players[0], _players[1], _players[0]));
+      _players[1].AddMatchHistory(new MatchRecord(_players[1], _players[0], _players[0]));
+
       igo = true;
     } else if (_pieces.BlackOff.Count == 15) {
       controller.GameOver(_players[1]);
+      _players[0].AddMatchHistory(new MatchRecord(_players[0], _players[1], _players[1]));
+      _players[1].AddMatchHistory(new MatchRecord(_players[1], _players[0], _players[1]));
       igo = true;
+    }
+
+    if (igo) {
+      // Save game to db
+      Database db = Database.CreateDatabase();
+      db.WritePlayerToDB(_players[0], _players[1]);
     }
 
     Logger.Info($"(GameState)IsGameOver: It is {igo} that the game is over.");
@@ -746,6 +760,7 @@ public class GameState {
       }
       Logger.Info($"Picking up Piece: {piece.ToString()}");
       _pieces.PieceInHand = piece;
+      PlaySound(SoundEffectsEnum.PickupPiece);
       return true;
     }
   }
@@ -820,6 +835,14 @@ public class GameState {
     if (MustPass()) {
       Logger.Info("Player cannot move passing turn");
       ChangeCurrentPlayer();
+    }
+  }
+
+  // Tries to play a sound if it can. if it can't just skip it
+  public void PlaySound(SoundEffectsEnum sound) {
+    SoundHandler soundHandler = GameObject.FindObjectOfType<SoundHandler>();
+    if (soundHandler) {
+      soundHandler.PlaySound(sound);
     }
   }
 
