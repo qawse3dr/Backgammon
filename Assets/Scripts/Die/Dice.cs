@@ -15,11 +15,12 @@ public class Dice {
     get { return _isGrey; }
     set {
       _isGrey = value;
-      if (_isGrey)
-        Grey();
+      Grey();
       // Do un-grey code here
     }
   }
+
+  public string RollAssetString;
   public int Roll  // property
       {
     get { return _roll; }
@@ -61,7 +62,11 @@ public class Dice {
   die's color to gray to indicate that a move corresponding to that die has been made.
   */
   public void Grey() {
+    var die = GameObject.Find(RollAssetString);
+    if (die != null) {
+      die.GetComponent<SpriteRenderer>().enabled = true;
+    }
     Logger.Debug(
-        $"(Dice)Grey: Dice background color changed to Grey to indicate that it's rolled has been used.");
+        $"(Dice)Grey {RollAssetString}: Dice background color changed to Grey to indicate that it's rolled has been used.");
   }
 }
