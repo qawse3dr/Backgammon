@@ -61,7 +61,7 @@ public class Player {
   // Player::GetMatchHistory()
   // Maybe I should use a property for this but it seems clear to only use properities on only
   // methods
-  private Queue<MatchRecord> _matchHistory;
+  public Queue<MatchRecord> _matchHistory; // FIXME - temporairly set to public until GetMatchHistory done
 
   public PlayerEnum GetPlayerNum() {
     return PlayerNum;
@@ -140,6 +140,7 @@ public class Player {
     Player player = new Player(name, pNum);
     player._wins = wins;
     player._losses = losses;
+    player._matchHistory = new Queue<MatchRecord>();
     // NOTE: this should not be written to any text file this is to create mock objects for unit
     // testing.
     return player;
