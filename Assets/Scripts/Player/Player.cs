@@ -61,7 +61,7 @@ public class Player {
   // Player::GetMatchHistory()
   // Maybe I should use a property for this but it seems clear to only use properities on only
   // methods
-  private Queue<MatchRecord> _matchHistory; 
+  private Queue<MatchRecord> _matchHistory;
 
   public PlayerEnum GetPlayerNum() {
     return PlayerNum;
