@@ -61,7 +61,7 @@ public class Player {
   // Player::GetMatchHistory()
   // Maybe I should use a property for this but it seems clear to only use properities on only
   // methods
-  public Queue<MatchRecord> _matchHistory; // FIXME - temporairly set to public until GetMatchHistory done
+  private Queue<MatchRecord> _matchHistory; 
 
   public PlayerEnum GetPlayerNum() {
     return PlayerNum;
@@ -149,6 +149,9 @@ public class Player {
   // Only used for unit tests
   public void SetMatchHistoryUnitTest(Queue<MatchRecord> history) {
     this._matchHistory = history;
+  }
+  public Queue<MatchRecord> GetMatchHistory() {
+    return _matchHistory;
   }
   public static explicit operator Player(string s) {
     string[] playerString = s.Split(',');

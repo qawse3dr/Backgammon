@@ -21,7 +21,9 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
   public Queue<MatchRecord> curMatchHistory;
   void Start()
   {
-    _playerList = setUpPlayerList();
+    Database.DB_PATH = "stats.db";
+    Database db = Database.CreateDatabase();
+    _playerList = db.ReadDB();
     //Fetch the Dropdown GameObject
     m_Dropdown = GetComponent<Dropdown>();
     TotalWinNum = GameObject.Find("TotalWinNum").GetComponent<Text>();  
@@ -42,10 +44,9 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
     resetUI();
 
   }
-  //Ouput the new value of the Dropdown into Text
+
   void DropdownValueChanged(Dropdown change)
   {
-    Logger.Info("HEREEEEEE");
     // total wins and losses
     curPlayer = _playerList[change.value];
     int wins = curPlayer.Wins;
@@ -53,8 +54,7 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
     TotalWinNum.GetComponent<UnityEngine.UI.Text>().text = wins.ToString();
     TotalLossNum.GetComponent<UnityEngine.UI.Text>().text = losses.ToString();
     // match history
-    curMatchHistory = curPlayer._matchHistory; // FIXME 
-    Logger.Info("***" + curMatchHistory.Count + "***");
+    curMatchHistory = curPlayer.GetMatchHistory(); 
     int curWin = 1;
     int curLoss = 1;
     int curGame = 1;
@@ -66,10 +66,7 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
         Logger.Info("~~~~~~~" + mr.ToString() + "\n");
         if (mr.Winner == curPlayer.Name){ // win
           // grey square off
-          Logger.Info("Disabling WinSquareGrey(" + curWin + ")");
           GameObject.Find("WinSquareGrey(" + curWin + ")").GetComponent<Renderer>().enabled = false; //!GameObject.Find("WinSquareGrey(" + curWin + ")").GetComponent<Renderer>().enabled; 
-          Logger.Info("Finding WinGame# (" + curWin + ")");
-          Logger.Info("Setting WinGame# (" + curWin + ") to " + curGame);
           // add 'game #' label
           GameObject.Find("WinGame (" + curWin + ")").GetComponent<Text>().text = "Game # ";
           // add game number value
@@ -144,74 +141,6 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
     GameObject.Find("OpponentLoss (3)").GetComponent<Text>().text = "";
     GameObject.Find("OpponentLoss (4)").GetComponent<Text>().text = "";
     GameObject.Find("OpponentLoss (5)").GetComponent<Text>().text = "";
-  }
-  List<Player> setUpPlayerList(){
-    // setup database
-    Database.DB_PATH = "stats.db";
-    Player pAjit = Player.CreateNewPlayerUnitTest("Ajit", PlayerEnum.NotSet, 6, 9);
-    Player pLarry = Player.CreateNewPlayerUnitTest("Larry", PlayerEnum.NotSet, 5, 3);
-    Player pRachel = Player.CreateNewPlayerUnitTest("Rachel", PlayerEnum.NotSet, 1, 2);
-    Player pNuman = Player.CreateNewPlayerUnitTest("Numan", PlayerEnum.NotSet, 7, 5);
-    // add match records
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pLarry, pLarry));
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pAjit, pLarry));
-
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pAjit, pRachel));
-
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pRachel, pAjit));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pAjit, pAjit));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pNuman, pRachel));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pAjit, pAjit));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pNuman, pAjit));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pAjit, pNuman));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pNuman, pNuman));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pAjit, pNuman));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pNuman, pNuman));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pLarry, pNuman));
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pNuman, pNuman));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pAjit, pNuman));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pNuman, pNuman));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pNuman, pRachel));
-
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pLarry, pRachel));
-
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pAjit, pAjit));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pLarry, pAjit));
-
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pAjit, pAjit));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pLarry, pAjit));
-
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pAjit, pLarry));
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pLarry, pLarry));
-
-    pNuman.AddMatchHistory(new MatchRecord(pNuman, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pNuman, pRachel));
-
-    pAjit.AddMatchHistory(new MatchRecord(pAjit, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pAjit, pRachel));
-
-    pLarry.AddMatchHistory(new MatchRecord(pLarry, pRachel, pRachel));
-    pRachel.AddMatchHistory(new MatchRecord(pRachel, pLarry, pRachel));
-    Database db = Database.CreateDatabase();
-    db.WritePlayerToDB(pAjit);
-    db.WritePlayerToDB(pLarry);
-    db.WritePlayerToDB(pRachel);
-    db.WritePlayerToDB(pNuman);
-    
-    _playerList = db.ReadDB();
-  
-    return _playerList;
   }
   
 }
