@@ -5,6 +5,7 @@ using System.ComponentModel;
 using UnityEngine.UI;
 using UnityEngine;
 using Logger = LNAR.Logger;
+
 /*
 For a given player currently playing, that player could either be in the "roll phase" or "move
 phase" of their turn. ROLL = roll phase, waiting for player to roll the die or while die is being
@@ -802,14 +803,16 @@ public class GameState {
     return players;
   }
 
+
   // Passes the controller so it has access to the sprites
   public void RollDice(BackgammonUIController uiController) {
     GameObject die1 = GameObject.Find("Die1");
     GameObject die2 = GameObject.Find("Die2");
     _die.Roll();
     _gamePhase = GamePhase.MOVE;
-
-    foreach ((GameObject go, int index)go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
+    
+    // set true value of rolls
+    foreach ((GameObject go, int index) go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
       switch (_die.Rolls[go.index]) {
         case 1:
           go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die1;

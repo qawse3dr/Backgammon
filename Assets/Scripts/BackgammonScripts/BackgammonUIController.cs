@@ -23,7 +23,8 @@ public class BackgammonUIController : MonoBehaviour {
   public Sprite Die4;
   public Sprite Die5;
   public Sprite Die6;
-
+  public RollSequence rollSequence1;
+  public RollSequence rollSequence2;
   void Start() {
     image.enabled = false;
     text.enabled = false;
@@ -31,6 +32,10 @@ public class BackgammonUIController : MonoBehaviour {
     winner.enabled = false;
     buttonBorder.enabled = false;
     panelBorder.enabled = false;
+    Logger.Info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    rollSequence1 = GameObject.Find("Die1").GetComponent<RollSequence>();
+    rollSequence2 = GameObject.Find("Die2").GetComponent<RollSequence>();
+    Logger.Info("BBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
   }
 
   public void MainMenuOnClick() {
@@ -72,6 +77,7 @@ public class BackgammonUIController : MonoBehaviour {
     Logger.Debug("Setting roll UI to false");
     GameObject.Find("Roll").GetComponent<Text>().enabled = false;
     Logger.Debug("Rolling dice");
-    GameHandler.Game.RollDice(this);
+    rollSequence1.SequenceStart(this); // show sequence of random rolls for die 1
+    rollSequence2.SequenceStart(this); // show sequence of random rolls for die 2
   }
 }
