@@ -803,16 +803,15 @@ public class GameState {
     return players;
   }
 
-
   // Passes the controller so it has access to the sprites
   public void RollDice(BackgammonUIController uiController) {
     GameObject die1 = GameObject.Find("Die1");
     GameObject die2 = GameObject.Find("Die2");
     _die.Roll();
     _gamePhase = GamePhase.MOVE;
-    
+
     // set true value of rolls
-    foreach ((GameObject go, int index) go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
+    foreach ((GameObject go, int index)go in new List<(GameObject, int)> { (die1, 0), (die2, 1) }) {
       switch (_die.Rolls[go.index]) {
         case 1:
           go.go.GetComponent<SpriteRenderer>().sprite = uiController.Die1;
