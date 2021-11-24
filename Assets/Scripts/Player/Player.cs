@@ -140,6 +140,7 @@ public class Player {
     Player player = new Player(name, pNum);
     player._wins = wins;
     player._losses = losses;
+    player._matchHistory = new Queue<MatchRecord>();
     // NOTE: this should not be written to any text file this is to create mock objects for unit
     // testing.
     return player;
@@ -148,6 +149,9 @@ public class Player {
   // Only used for unit tests
   public void SetMatchHistoryUnitTest(Queue<MatchRecord> history) {
     this._matchHistory = history;
+  }
+  public Queue<MatchRecord> GetMatchHistory() {
+    return _matchHistory;
   }
   public static explicit operator Player(string s) {
     string[] playerString = s.Split(',');
