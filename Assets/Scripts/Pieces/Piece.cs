@@ -25,6 +25,8 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
   // Used to reset the piece object if moving it fails
   private Vector2 _previousPostion;
+
+  private float _previousPostionOverlapY;
   // The player who's Piece this is
   // TODO remove once owner is set
   private Player _owner = null;
@@ -120,6 +122,7 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     // As piece Init is not fully done yet
     _boardIndex = StartPointIndex;
     _isPickedUp = false;
+    _previousPostionOverlapY = transform.position.y;
 
     if (GameHandler.Game == null) {
       GameHandler.Game = new GameState();
@@ -221,9 +224,10 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     }
 
     ////////// Worked update board /////////////////
-    if (boardState.MyBoard[_boardIndex - 1].Contains(this))
+    if (boardState.MyBoard[_boardIndex - 1].Contains(this)) {
       boardState.MyBoard[_boardIndex - 1].Remove(this);
-
+      overlapAdjust(boardState.MyBoard[_boardIndex - 1], _boardIndex);
+    }
     boardState.MyHome.Add(this);
 
     /////////// Update sprite pos //////////////
@@ -258,6 +262,24 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     return true;
   }
 
+  private bool overlapAdjust(List<Piece> boardPoint, int boardIndex) {
+    int overlapFactor = boardPoint.Count - 5;
+    int isTop = 0;
+    // Top board or bottom board
+    isTop = (boardIndex <= 12) ? -1 : 1;
+
+    float squishVal = 0.08f;
+    if (overlapFactor >= 0) {
+      for (int i = 1; i < boardPoint.Count; i++) {
+        var deltaX = boardPoint[i].transform.position.x;
+        var currentY =
+            boardPoint[i]._previousPostionOverlapY + (squishVal * i) * overlapFactor * isTop;
+        boardPoint[i].transform.position = new Vector2(deltaX, currentY);
+      }
+      return true;
+    }
+    return false;
+  }
   /**
    * Moves the piece on board index. This will assume that checks have already been done,
    * All other flags will be set to false.
@@ -283,9 +305,10 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     if (_onBar) {
       boardState.MyBar.Remove(this);
 
-    } else if (boardState.MyBoard[_boardIndex - 1].Contains(this))
+    } else if (boardState.MyBoard[_boardIndex - 1].Contains(this)) {
       boardState.MyBoard[_boardIndex - 1].Remove(this);
-
+      overlapAdjust(boardState.MyBoard[_boardIndex - 1], _boardIndex);
+    }
     boardState.MyBoard[boardIndex - 1].Add(this);
 
     if (boardState.OtherBoard[boardIndex - 1].Count == 1) {
@@ -312,15 +335,19 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     }
 
     deltaY = (boardState.MyBoard[boardIndex - 1].Count - 1) * 0.5460075f;
+
     // Delta y (top board or bottom board)
     if (boardIndex <= 12) {
       deltaY = -3.87f + deltaY;
     } else if (boardIndex <= 24) {
       deltaY = 1.257f - deltaY;
     }
+    // Need the previous position's Y so we can do overlapping every time a piece is added
+    _previousPostionOverlapY = deltaY;
 
     transform.position = new Vector2(deltaX, deltaY);
-
+    // Overlapping and undoing overlapping
+    overlapAdjust(boardState.MyBoard[boardIndex - 1], boardIndex);
     //////////// Update Internals /////////////
 
     MoveToBoardIndexNoCheck(boardIndex);
