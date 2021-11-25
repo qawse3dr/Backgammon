@@ -11,10 +11,6 @@ using Logger = LNAR.Logger;
  *   Changing Scene functionality
  */
 public class MenuSystemController : MonoBehaviour {
-<<<<<<< HEAD
-
-=======
->>>>>>> d1b4de4 (Profile creation is done)
   public GameObject CreatePlayerPopup;
   public InputField input;
   // public Database db = Database.CreateDatabase();
@@ -22,10 +18,6 @@ public class MenuSystemController : MonoBehaviour {
     Database.DB_PATH = "stats.db";
 
     CreatePlayerPopup.SetActive(false);
-<<<<<<< HEAD
-    Database.DB_PATH = "stats.db";
-=======
->>>>>>> d1b4de4 (Profile creation is done)
   }
 
   public void StartGameOnClick() {
