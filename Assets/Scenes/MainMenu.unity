@@ -948,6 +948,30 @@ PrefabInstance:
       propertyPath: m_FontData.m_BestFit
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.582
+      objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 342.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 31.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7718997472343496262, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7718997472436408682, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

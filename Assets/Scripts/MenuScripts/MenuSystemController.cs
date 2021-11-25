@@ -11,14 +11,23 @@ using Logger = LNAR.Logger;
  *   Changing Scene functionality
  */
 public class MenuSystemController : MonoBehaviour {
+<<<<<<< HEAD
 
+=======
+>>>>>>> d1b4de4 (Profile creation is done)
   public GameObject CreatePlayerPopup;
   public InputField input;
-
+  // public Database db = Database.CreateDatabase();
   void Start() {
-    CreatePlayerPopup.SetActive(false);
     Database.DB_PATH = "stats.db";
+
+    CreatePlayerPopup.SetActive(false);
+<<<<<<< HEAD
+    Database.DB_PATH = "stats.db";
+=======
+>>>>>>> d1b4de4 (Profile creation is done)
   }
+
   public void StartGameOnClick() {
     Logger.Info("Starting Game Scene...");
     SceneManager.LoadScene("SelectPlayer");
@@ -46,13 +55,30 @@ public class MenuSystemController : MonoBehaviour {
   }
 
   public void PlayerCreation() {
-    //var input = gameObject.GetComponent<InputField>();
+    // var input = gameObject.GetComponent<InputField>();
+    int flag = 0;
     Logger.Info(input.text);
-
-    if(input.text == ""){
-      GameObject.Find("CreatePlayerHeader").GetComponent<Text>().text = "Please Do Not Leave The Text Field Empty";
+    if (input.text == "") {
+      GameObject.Find("CreatePlayerHeader").GetComponent<Text>().text =
+          "Please Do Not Leave The Text Field Empty";
     } else {
-      CreatePlayerPopup.SetActive(false);
+      Database db = Database.CreateDatabase();
+      List<Player> players = db.ReadDB();
+
+      foreach (var player in players) {
+        if (input.text == player.Name) {
+          flag = 1;
+        }
+      }
+
+      if (flag == 0) {
+        db.WritePlayerToDB(Player.CreateNewPlayer(input.text, PlayerEnum.NotSet));
+        CreatePlayerPopup.SetActive(false);
+      } else {
+        GameObject.Find("CreatePlayerHeader").GetComponent<Text>().text =
+            "Account Already Exists Please Try A Different Username";
+      }
     }
+    flag = 0;
   }
 }
