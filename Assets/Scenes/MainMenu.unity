@@ -932,6 +932,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1454744875}
     m_Modifications:
+    - target: {fileID: 671990400552089812, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_Text
+      value: Back
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.307
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.36100003
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.307
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.36100003
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4563134732910507207, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6230637080545376083, guid: fa7bb88c406e2bd4d8029e27962e4c9b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -1314,7 +1342,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Edit Profiles
+  m_Text: Create Profile
 --- !u!222 &1989440013
 CanvasRenderer:
   m_ObjectHideFlags: 0
