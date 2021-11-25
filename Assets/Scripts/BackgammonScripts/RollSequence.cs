@@ -6,11 +6,15 @@ using Logger = LNAR.Logger;
 public class RollSequence : MonoBehaviour {
   private IEnumerator coroutine;
   private System.Random r;
+  private Renderer grey1;
+  private Renderer grey2;
   // Start is called before the first frame update
   void Start() {
     r = new System.Random(System.Environment.TickCount ^
                           this.name[this.name.Length - 1]);  // use dice number as part of seed so
                                                              // that each die rolls differently
+    grey1 = GameObject.Find("DieGrey1").GetComponent<SpriteRenderer>();
+    grey2 = GameObject.Find("DieGrey2").GetComponent<SpriteRenderer>();
   }
 
   public void SequenceStart(BackgammonUIController uiController) {
@@ -36,5 +40,7 @@ public class RollSequence : MonoBehaviour {
     GameHandler.Game.RollDice(
         uiController);  // call next step from inside coroutine so it waits for random rolls to
                         // finish before allowing player to move
+    grey1.enabled = false;
+    grey2.enabled = false;
   }
 }

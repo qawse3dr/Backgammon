@@ -25,6 +25,7 @@ public class BackgammonUIController : MonoBehaviour {
   public Sprite Die6;
   public RollSequence rollSequence1;
   public RollSequence rollSequence2;
+
   void Start() {
     image.enabled = false;
     text.enabled = false;
@@ -32,10 +33,8 @@ public class BackgammonUIController : MonoBehaviour {
     winner.enabled = false;
     buttonBorder.enabled = false;
     panelBorder.enabled = false;
-    Logger.Info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     rollSequence1 = GameObject.Find("Die1").GetComponent<RollSequence>();
     rollSequence2 = GameObject.Find("Die2").GetComponent<RollSequence>();
-    Logger.Info("BBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
   }
 
   public void MainMenuOnClick() {

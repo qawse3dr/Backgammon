@@ -695,6 +695,8 @@ public class GameState {
     _gamePhase = GamePhase.ROLL;
     Logger.Debug("Enableing roll text");
     GameObject.Find("Roll").GetComponent<Text>().enabled = true;
+    GameObject.Find("DieGrey1").GetComponent<SpriteRenderer>().enabled = true;
+    GameObject.Find("DieGrey2").GetComponent<SpriteRenderer>().enabled = true;
 
     // Change PlayerIcon prefab colours according to current player
     GameObject playerIcon1 = GameObject.Find("PlayerIcon1");
