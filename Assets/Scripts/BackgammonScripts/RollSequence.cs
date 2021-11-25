@@ -22,8 +22,6 @@ public class RollSequence : MonoBehaviour {
         new List<UnityEngine.Sprite>() { uiController.Die1, uiController.Die2, uiController.Die3,
                                          uiController.Die4, uiController.Die5, uiController.Die6 };
     // show some random dies to simulate rolling
-    // grey1.enabled = true;
-    // grey2.enabled = true;
     coroutine = RandomRollCoroutine(uiController, allDice);
     StartCoroutine(coroutine);
   }
