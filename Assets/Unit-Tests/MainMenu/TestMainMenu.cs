@@ -21,7 +21,7 @@ public class TestMainMenu {
   }
 
   // A Test behaves as an ordinary method
-  [UnityTest]
+  /*[UnityTest]
   public IEnumerator Test_MainMenuStartGame() {
     // Invoke click
     _menuController.StartGameOnClick();
@@ -33,7 +33,7 @@ public class TestMainMenu {
     // Test to see if Scene was changed
     Assert.AreNotEqual(SceneManager.GetActiveScene().name,
                        SceneManager.GetSceneByName("MainMenu").name);
-  }
+  }*/
 
   /** Application can't actually quit so just make sure this doesn't crash */
   [Test]
