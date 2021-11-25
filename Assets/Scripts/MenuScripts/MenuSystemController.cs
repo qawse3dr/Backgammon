@@ -27,7 +27,8 @@ public class MenuSystemController : MonoBehaviour {
     Logger.Info("Opening Edit Profiles Page...");
   }
 
-  public void StatsOnClick() {
-    Logger.Info("Opening Stats Page...");
+  public void StatsPageOnClick() {
+    Logger.Info("Redirecting to stats page...");
+    SceneManager.LoadScene("StatsScene");
   }
 }
