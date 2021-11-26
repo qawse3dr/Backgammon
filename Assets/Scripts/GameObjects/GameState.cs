@@ -694,7 +694,8 @@ public class GameState {
         2, new List<int> { DateTime.Now.Millisecond, DateTime.Now.Millisecond + 1 });  // 2 Dice
     _gamePhase = GamePhase.ROLL;
     Logger.Debug("Enableing roll text");
-    GameObject.Find("Roll").GetComponent<Text>().enabled = true;
+    GameObject.Find("Roll").GetComponent<Image>().enabled = true;
+    GameObject.Find("RollText").GetComponent<Text>().enabled = true;
     GameObject.Find("DieGrey1").GetComponent<SpriteRenderer>().enabled = true;
     GameObject.Find("DieGrey2").GetComponent<SpriteRenderer>().enabled = true;
 
@@ -731,7 +732,6 @@ public class GameState {
   public bool SetPieceInHand(Piece piece) {
     if (piece == null) {  // Drop piece
       _pieces.PieceInHand = null;
-      // Todo check if piece can be dropped.
       Logger.Warn("Piece is set to null");
       return true;
     } else if (_pieces.PieceInHand != null) {  // Failed
@@ -782,8 +782,6 @@ public class GameState {
            $"Players: " + players + indent + $"PlayerTurn: " + playerTurn + "\n" + indent +
            $"GamePhase: {_gamePhase})";
   }
-
-  // TODO REMOVE once piece init is complete
   public Player GetPlayer(PlayerEnum playerNum) {
     if (playerNum == PlayerEnum.Player1) {
       return _players[0];

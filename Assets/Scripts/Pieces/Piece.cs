@@ -28,7 +28,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
   private float _previousPostionOverlapY;
   // The player who's Piece this is
-  // TODO remove once owner is set
   private Player _owner = null;
   public Player Owner {
     get { return _owner; }
@@ -38,7 +37,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     }
   }
 
-  // TODO remove once init is done
   public PlayerEnum StartingOwner;
   public int StartPointIndex;
   public int StartVerticality;
@@ -145,7 +143,6 @@ public class Piece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
   public bool PickUpOrDrop() {
     Logger.Debug($"Piece PickedUp or Dropped: {ToString()}");
     if (_isPickedUp) {
-      // Todo place code
       GameHandler.Game.SetPieceInHand(null);
       _isPickedUp = false;
 

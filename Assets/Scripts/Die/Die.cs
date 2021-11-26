@@ -84,6 +84,10 @@ public class Die {
       d.Add(new Dice(Seeds[i]));
     }
     _Die = d;
+    if (_Die.Count == 2) {
+      _Die[0].RollAssetString = "DieGrey1";
+      _Die[1].RollAssetString = "DieGrey2";
+    }
   }
 
   /*

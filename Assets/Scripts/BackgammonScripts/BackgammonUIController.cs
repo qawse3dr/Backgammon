@@ -74,7 +74,9 @@ public class BackgammonUIController : MonoBehaviour {
 
     Logger.Debug("Rolling dice");
     Logger.Debug("Setting roll UI to false");
-    GameObject.Find("Roll").GetComponent<Text>().enabled = false;
+    GameObject.Find("Roll").GetComponent<Image>().enabled = false;
+    GameObject.Find("RollText").GetComponent<Text>().enabled = false;
+
     Logger.Debug("Rolling dice");
     rollSequence1.SequenceStart(this);  // show sequence of random rolls for die 1
     rollSequence2.SequenceStart(this);  // show sequence of random rolls for die 2

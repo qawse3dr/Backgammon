@@ -21,7 +21,6 @@ public class SelectPlayerUIHandler : MonoBehaviour {
   }
   // Start is called before the first frame update
   void Start() {
-    // TODO change once where figure out the db
     Database db = Database.CreateDatabase();
     _playerList = db.ReadDB();
 
@@ -77,5 +76,10 @@ public class SelectPlayerUIHandler : MonoBehaviour {
     GameHandler.Game = new GameState();
     GameHandler.Game.InitBoardState(player1, player2);
     SceneManager.LoadScene("Backgammon");
+  }
+
+  public void GoBackToMainMenu() {
+    Logger.Info("Redirecting to stats page...");
+    SceneManager.LoadScene("MainMenu");
   }
 }

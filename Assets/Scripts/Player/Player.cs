@@ -132,7 +132,6 @@ public class Player {
     player._wins = 0;
     player._matchHistory = new Queue<MatchRecord>();
     return player;
-    // TODO write this to db
   }
 
   // Only used for unit tests use CreateNewPlayer() for production.
@@ -150,6 +149,8 @@ public class Player {
   public void SetMatchHistoryUnitTest(Queue<MatchRecord> history) {
     this._matchHistory = history;
   }
+
+  // gets the match history
   public Queue<MatchRecord> GetMatchHistory() {
     return _matchHistory;
   }
