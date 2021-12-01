@@ -35,10 +35,12 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
     }
     m_Dropdown.AddOptions(options);
 
+    resetUI();
+    DropdownValueChanged(m_Dropdown);
+
     // Add listener for when the value of the Dropdown changes, to take action
     m_Dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(m_Dropdown); });
 
-    resetUI();
   }
 
   void DropdownValueChanged(Dropdown change) {
