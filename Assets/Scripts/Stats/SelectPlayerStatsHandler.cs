@@ -40,7 +40,6 @@ public class SelectPlayerStatsHandler : MonoBehaviour {
 
     // Add listener for when the value of the Dropdown changes, to take action
     m_Dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(m_Dropdown); });
-
   }
 
   void DropdownValueChanged(Dropdown change) {
